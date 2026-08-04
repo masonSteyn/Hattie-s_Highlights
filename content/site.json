@@ -89,6 +89,21 @@
       ],
       "featured": false,
       "order": 5
+    },
+    {
+      "_id": "/photos/img-1110-msf4c4u0qu9.jpg",
+      "image": {
+        "src": "/photos/img-1110-msf4c4u0qu9.jpg",
+        "width": 1280,
+        "height": 1920,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUCA//EAB8QAAIBBAMBAQAAAAAAAAAAAAECAwAEESESMVETQf/EABcBAAMBAAAAAAAAAAAAAAAAAAABAgP/xAAaEQACAgMAAAAAAAAAAAAAAAAAAQIREiFh/9oADAMBAAIRAxEAPwCZNM7qoJPEnC60DVexspbpWk4q/WSfd5rV9YRxJH8gHLNgKAc9UsoHltxynaJFJC4Y790OqS2rbJx4Qre7nRtSMcDkASSAa53EskjlTIwUHIAP6QM0pWkkET//2Q==",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": true,
+      "order": 6
     }
   ],
   "categories": [
