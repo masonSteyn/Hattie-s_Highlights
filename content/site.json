@@ -1,6 +1,21 @@
 {
   "photos": [
     {
+      "_id": "/photos/img-0084-msf4m9xsehh.jpg",
+      "image": {
+        "src": "/photos/img-0084-msf4m9xsehh.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQGA//EAB8QAAICAgMAAwAAAAAAAAAAAAECAxEAEgQhMSJxkf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AEZBHEpMTuorwGx+HMHgTkQJI41ciuiBf2MC96WLBqxlLBBBFxyqQJoeypF4lEg3DkU0uhFek1hjUh+baigCQB71eGSD/9k=",
+        "alt": ""
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 0
+    },
+    {
       "_id": "/photos/img-0843-msf3zsokktp.jpg",
       "image": {
         "src": "/photos/img-0843-msf3zsokktp.jpg",
@@ -13,7 +28,7 @@
         "nature"
       ],
       "featured": true,
-      "order": 0
+      "order": 1
     },
     {
       "_id": "/photos/img-0643-msf443hqyo9.jpg",
@@ -28,7 +43,7 @@
         "nature"
       ],
       "featured": false,
-      "order": 1
+      "order": 2
     },
     {
       "_id": "/photos/img-1110-msf4c4u0qu9.jpg",
@@ -43,7 +58,7 @@
         "nature"
       ],
       "featured": true,
-      "order": 2
+      "order": 3
     },
     {
       "_id": "/photos/img-0739-msf4cvkvpf9.jpg",
@@ -58,21 +73,6 @@
         "nature"
       ],
       "featured": false,
-      "order": 3
-    },
-    {
-      "_id": "/photos/img-0084-msf4m9xsehh.jpg",
-      "image": {
-        "src": "/photos/img-0084-msf4m9xsehh.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQGA//EAB8QAAICAgMAAwAAAAAAAAAAAAECAxEAEgQhMSJxkf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AEZBHEpMTuorwGx+HMHgTkQJI41ciuiBf2MC96WLBqxlLBBBFxyqQJoeypF4lEg3DkU0uhFek1hjUh+baigCQB71eGSD/9k=",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": true,
       "order": 4
     },
     {
@@ -104,6 +104,36 @@
       ],
       "featured": false,
       "order": 6
+    },
+    {
+      "_id": "/photos/img-1230-msf5byd1b1f.jpg",
+      "image": {
+        "src": "/photos/img-1230-msf5byd1b1f.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAUGAgP/xAAkEAACAQMDAwUAAAAAAAAAAAABAgMABBEhIjESExQyQVOBkf/EABYBAQEBAAAAAAAAAAAAAAAAAAMCBP/EABoRAAIDAQEAAAAAAAAAAAAAAAECAANRIkH/2gAMAwEAAhEDEQA/AGKrACo7seW43DWt27W0och8dDFTnTUVMrdMjx7c4rpPcyQ3EbKfWoyOPutD2OCAfYCVIwJyU2IPlT9opJ50g9hRV9bD5yf/2Q==",
+        "alt": ""
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": false,
+      "order": 7
+    },
+    {
+      "_id": "/photos/img-0240-msf5d84j0a6.jpg",
+      "image": {
+        "src": "/photos/img-0240-msf5d84j0a6.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQAG/8QAIxAAAgIBAwMFAAAAAAAAAAAAAQIAAxEEITEFEmETIkFCcf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABwRAAICAgMAAAAAAAAAAAAAAAABAhEDURIhQv/aAAwDAQACEQMRAD8AFrayy0E2KATkgDAE0fSdO+S2pJrH1GfcfMGWlFSk9oyp5HzE1d7Ng5X8mEo+g10qH1r0wGzt54lBfWZABuduSZS8cehUtn//2Q==",
+        "alt": ""
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": false,
+      "order": 8
     }
   ],
   "categories": [
@@ -166,9 +196,9 @@
     "headlineBefore": "The parts you",
     "headlineScript": "remember",
     "headlineAfter": "",
-    "intro": "I photograph weddings, portraits, and the ordinary afternoons in between — mostly outdoors, mostly in whatever light the day gives us.",
+    "intro": "From weddings to portraits, and so much more, I believe the best photographs are the ones that feel effortless and the ones that feel like the real you. All of life's most meaningful moments can be captured. My goal is to capture the memories that feel genuine to you.",
     "closingHeading": "Dates open through fall",
-    "closingBody": "Tell me when and where, and I will tell you within a day whether I am free."
+    "closingBody": "Whether you're planning a big event or simply want to capture the season you're in, I'd love to be a part of it. Reach out to me with your goals, date, and time!"
   },
   "about": {
     "portrait": {
