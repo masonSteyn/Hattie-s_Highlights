@@ -13,10 +13,9 @@
 import providers from "../../scheduling-providers.json";
 
 /**
- * One list, three consumers: this validator, the Studio field that checks the
- * value on entry, and the `frame-src` directive in next.config.ts. Kept in JSON
- * because next.config.ts cannot import a .ts module at runtime — see the note
- * there.
+ * One list, two consumers: this validator and the `frame-src` directive in
+ * next.config.ts. Kept in JSON because next.config.ts cannot import a .ts
+ * module at runtime — see the note there.
  */
 export const SCHEDULING_PROVIDERS: readonly string[] = providers;
 

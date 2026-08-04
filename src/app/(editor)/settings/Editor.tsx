@@ -1,52 +1,105 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useState } from "react";
+import { useActionState, useCallback, useEffect, useMemo, useState } from "react";
 
-import type {
-  AboutContent,
-  Category,
-  HomeContent,
-  Photo,
-  SiteSettings,
-} from "@/lib/types";
+import { prepareUpload } from "@/lib/image-metadata";
+import type { SiteContent } from "@/lib/content";
 
-import {
-  deletePhoto,
-  movePhoto,
-  replaceImage,
-  saveAboutText,
-  saveAltText,
-  saveAvailability,
-  saveHomeText,
-  setFeatured,
-  signOut,
-  uploadPhotos,
-  type Result,
-} from "./actions";
+import { publish, signOut, type Result } from "./actions";
 
 const idle: Result = { ok: true };
 
+/** Where an unpublished draft is kept between page loads. */
+const DRAFT_KEY = "hh.draft.v1";
+
+type StagedImage = { path: string; dataUrl: string };
+
+/* ── Draft state ─────────────────────────────────────────────────────────── */
+
+type Draft = { content: SiteContent; newImages: StagedImage[] };
+
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+/**
+ * Everything is edited locally and published in one go.
+ *
+ * The alternative — saving each field as it changes — would mean a git commit
+ * and a site rebuild per keystroke. Holding a draft means Hattie can change ten
+ * things, look at them together, and publish once. It also gives her a way out:
+ * nothing is committed until she says so, and Discard puts it all back.
+ */
+function useDraft(published: SiteContent) {
+  const [draft, setDraft] = useState<Draft>(() => ({ content: clone(published), newImages: [] }));
+  const [loaded, setLoaded] = useState(false);
+
+  // Restore an unfinished draft — a closed tab should not cost an afternoon's
+  // work.
+  //
+  // This must run after mount rather than in the state initialiser: localStorage
+  // does not exist during server rendering, so reading it eagerly would make the
+  // server and client disagree about what to render. Reading an external store
+  // on mount is the documented exception to the set-state-in-effect rule.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(DRAFT_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, an external store unavailable during SSR
+      if (saved) setDraft(JSON.parse(saved) as Draft);
+    } catch {
+      /* Corrupt or full storage: fall back to the published content. */
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {
+      // Staged photos are held as data URLs, so a big batch can exceed the
+      // storage quota. Losing the backup is survivable; losing the draft in
+      // memory is not, so this is deliberately silent.
+    }
+  }, [draft, loaded]);
+
+  const update = useCallback((fn: (d: Draft) => void) => {
+    setDraft((current) => {
+      const next = clone(current);
+      fn(next);
+      return next;
+    });
+  }, []);
+
+  const discard = useCallback(() => {
+    window.localStorage.removeItem(DRAFT_KEY);
+    setDraft({ content: clone(published), newImages: [] });
+  }, [published]);
+
+  const dirty = useMemo(
+    () =>
+      draft.newImages.length > 0 ||
+      JSON.stringify(draft.content) !== JSON.stringify(published),
+    [draft, published],
+  );
+
+  return { draft, update, discard, dirty, loaded };
+}
+
 /* ── Shared bits ─────────────────────────────────────────────────────────── */
 
-function Status({ state }: { state: Result }) {
-  if (!state.message) return null;
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <p className={state.ok ? "edOk" : "edError"} role="status">
-      {state.message}
-    </p>
+    <>
+      <label className="edLabel">{label}</label>
+      {hint ? <p className="edNote">{hint}</p> : null}
+      {children}
+    </>
   );
 }
 
-function Section({
-  title,
-  intro,
-  children,
-}: {
-  title: string;
-  intro?: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, intro, children }: { title: string; intro?: string; children: React.ReactNode }) {
   return (
     <section className="edSection">
       <h2 className="edSectionTitle display">{title}</h2>
@@ -56,390 +109,357 @@ function Section({
   );
 }
 
-/* ── Availability banner ─────────────────────────────────────────────────── */
+/** Reads a file, validates and strips it in the browser for instant feedback.
+ *  The server does this again on publish — this copy is for the preview and the
+ *  error message, not for security. */
+async function stageFile(file: File, targetPath: string): Promise<StagedImage | string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const prepared = prepareUpload(bytes);
+  if (!prepared.ok) return `${file.name}: ${prepared.reason}`;
 
-function BannerPanel({ settings }: { settings: SiteSettings }) {
-  const [state, action, pending] = useActionState(saveAvailability, idle);
-  const [enabled, setEnabled] = useState(settings.availability.enabled);
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < prepared.bytes.length; i += chunk) {
+    binary += String.fromCharCode(...prepared.bytes.subarray(i, i + chunk));
+  }
+  return {
+    path: targetPath,
+    dataUrl: `data:image/${prepared.format};base64,${btoa(binary)}`,
+  };
+}
 
+function slugForUpload(name: string) {
+  const base = name.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return `${base.slice(0, 40) || "photo"}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+}
+
+/* ── Panels ──────────────────────────────────────────────────────────────── */
+
+function BannerPanel({ draft, update }: { draft: Draft; update: (fn: (d: Draft) => void) => void }) {
+  const banner = draft.content.settings.availability;
   return (
     <Section
       title="The strip across the top"
       intro="The quickest way to tell people whether you are taking bookings. Leave it off when it is not true — an out-of-date one is worse than none."
     >
-      <form action={action} className="edForm">
+      <div className="edForm">
         <label className="edToggle">
           <input
             type="checkbox"
-            name="enabled"
-            checked={enabled}
-            onChange={(e) => setEnabled(e.currentTarget.checked)}
+            checked={banner.enabled}
+            onChange={(e) => update((d) => { d.content.settings.availability.enabled = e.target.checked; })}
           />
           <span>Show it on every page</span>
         </label>
 
-        <label className="edLabel" htmlFor="banner-text">
-          What it says
-        </label>
-        <input
-          id="banner-text"
-          name="text"
-          className="edInput"
-          defaultValue={settings.availability.text}
-          maxLength={90}
-          placeholder="Booking fall 2026 — 3 dates left"
-        />
-
-        <div className="edActions">
-          <button className="edButton edButtonPrimary" disabled={pending}>
-            {pending ? "Saving…" : "Save"}
-          </button>
-          <Status state={state} />
-        </div>
-      </form>
+        <Field label="What it says">
+          <input
+            className="edInput"
+            value={banner.text}
+            maxLength={90}
+            placeholder="Booking fall 2026 — 3 dates left"
+            onChange={(e) => update((d) => { d.content.settings.availability.text = e.target.value; })}
+          />
+        </Field>
+      </div>
     </Section>
   );
 }
 
-/* ── Swap a single image ─────────────────────────────────────────────────── */
-
 function ImageSwap({
-  documentId,
-  fieldName,
   label,
   current,
+  onPick,
+  onAlt,
 }: {
-  documentId: string;
-  fieldName: string;
   label: string;
   current: { src: string; width: number; height: number; lqip: string; alt: string };
+  onPick: (file: File) => void;
+  onAlt: (alt: string) => void;
 }) {
-  const [state, action, pending] = useActionState(replaceImage, idle);
-
+  const isStaged = current.src.startsWith("data:");
   return (
-    <form action={action} className="edForm edSwap">
-      <input type="hidden" name="documentId" value={documentId} />
-      <input type="hidden" name="fieldName" value={fieldName} />
-
+    <div className="edForm edSwap">
       <div className="edSwapPreview">
-        <Image
-          src={current.src}
-          alt={current.alt}
-          width={current.width}
-          height={current.height}
-          placeholder="blur"
-          blurDataURL={current.lqip}
-          sizes="320px"
-        />
+        {isStaged ? (
+          // eslint-disable-next-line @next/next/no-img-element -- a staged file is a data URL with no known dimensions yet
+          <img src={current.src} alt={current.alt} />
+        ) : (
+          <Image
+            src={current.src}
+            alt={current.alt}
+            width={current.width}
+            height={current.height}
+            placeholder="blur"
+            blurDataURL={current.lqip}
+            sizes="320px"
+          />
+        )}
+        {isStaged ? <p className="edStaged">Not published yet</p> : null}
       </div>
 
       <div className="edSwapFields">
-        <label className="edLabel" htmlFor={`${fieldName}-file`}>
-          {label}
-        </label>
-        <input
-          id={`${fieldName}-file`}
-          name="image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="edFile"
-          required
-        />
-
-        <label className="edLabel" htmlFor={`${fieldName}-alt`}>
-          Describe it
-        </label>
-        <input
-          id={`${fieldName}-alt`}
-          name="alt"
-          className="edInput"
-          defaultValue={current.alt}
-          minLength={8}
-          maxLength={200}
-          required
-        />
-
-        <div className="edActions">
-          <button className="edButton" disabled={pending}>
-            {pending ? "Uploading…" : "Swap photo"}
-          </button>
-          <Status state={state} />
-        </div>
+        <Field label={label}>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="edFile"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }}
+          />
+        </Field>
+        <Field label="Describe it">
+          <input className="edInput" value={current.alt} onChange={(e) => onAlt(e.target.value)} maxLength={200} />
+        </Field>
       </div>
-    </form>
+    </div>
   );
 }
 
-/* ── Home page ───────────────────────────────────────────────────────────── */
-
-function HomePanel({ home }: { home: HomeContent }) {
-  const [state, action, pending] = useActionState(saveHomeText, idle);
-
+function HomePanel({
+  draft,
+  update,
+  stage,
+}: {
+  draft: Draft;
+  update: (fn: (d: Draft) => void) => void;
+  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+}) {
+  const home = draft.content.home;
   return (
     <Section title="Home page">
       <ImageSwap
-        documentId="homePage"
-        fieldName="hero"
         label="The big photo at the top"
         current={home.hero}
+        onPick={(file) =>
+          stage(file, (d, path, dataUrl) => {
+            d.content.home.hero.src = dataUrl;
+            d.content.home.hero.publishPath = path;
+          })
+        }
+        onAlt={(alt) => update((d) => { d.content.home.hero.alt = alt; })}
       />
 
-      <form action={action} className="edForm">
+      <div className="edForm">
         <p className="edNote">
           The headline is in three parts because one word is set in the handwriting font. Keep that
           word to one — it is beautiful and very hard to read in long runs.
         </p>
-
         <div className="edRow">
           <div>
-            <label className="edLabel" htmlFor="hb">
-              First part
-            </label>
-            <input id="hb" name="headlineBefore" className="edInput" defaultValue={home.headlineBefore} maxLength={60} />
+            <Field label="First part">
+              <input className="edInput" value={home.headlineBefore} maxLength={60}
+                onChange={(e) => update((d) => { d.content.home.headlineBefore = e.target.value; })} />
+            </Field>
           </div>
           <div>
-            <label className="edLabel" htmlFor="hs">
-              Handwritten word
-            </label>
-            <input id="hs" name="headlineScript" className="edInput edScript" defaultValue={home.headlineScript} maxLength={18} />
+            <Field label="Handwritten word">
+              <input className="edInput edScript" value={home.headlineScript} maxLength={18}
+                onChange={(e) => update((d) => { d.content.home.headlineScript = e.target.value; })} />
+            </Field>
           </div>
           <div>
-            <label className="edLabel" htmlFor="ha">
-              Last part (optional)
-            </label>
-            <input id="ha" name="headlineAfter" className="edInput" defaultValue={home.headlineAfter} maxLength={60} />
+            <Field label="Last part (optional)">
+              <input className="edInput" value={home.headlineAfter} maxLength={60}
+                onChange={(e) => update((d) => { d.content.home.headlineAfter = e.target.value; })} />
+            </Field>
           </div>
         </div>
 
-        <label className="edLabel" htmlFor="intro">
-          The line under the photo
-        </label>
-        <textarea id="intro" name="intro" className="edInput edTextarea" rows={3} defaultValue={home.intro} maxLength={280} />
-
-        <label className="edLabel" htmlFor="ch">
-          Heading at the bottom
-        </label>
-        <input id="ch" name="closingHeading" className="edInput" defaultValue={home.closingHeading} maxLength={80} />
-
-        <label className="edLabel" htmlFor="cb">
-          Text at the bottom
-        </label>
-        <textarea id="cb" name="closingBody" className="edInput edTextarea" rows={2} defaultValue={home.closingBody} maxLength={280} />
-
-        <div className="edActions">
-          <button className="edButton edButtonPrimary" disabled={pending}>
-            {pending ? "Saving…" : "Save"}
-          </button>
-          <Status state={state} />
-        </div>
-      </form>
+        <Field label="The line under the photo">
+          <textarea className="edInput edTextarea" rows={3} value={home.intro} maxLength={280}
+            onChange={(e) => update((d) => { d.content.home.intro = e.target.value; })} />
+        </Field>
+        <Field label="Heading at the bottom">
+          <input className="edInput" value={home.closingHeading} maxLength={80}
+            onChange={(e) => update((d) => { d.content.home.closingHeading = e.target.value; })} />
+        </Field>
+        <Field label="Text at the bottom">
+          <textarea className="edInput edTextarea" rows={2} value={home.closingBody} maxLength={280}
+            onChange={(e) => update((d) => { d.content.home.closingBody = e.target.value; })} />
+        </Field>
+      </div>
     </Section>
   );
 }
 
-/* ── About page ──────────────────────────────────────────────────────────── */
-
-function AboutPanel({ about }: { about: AboutContent }) {
-  const [state, action, pending] = useActionState(saveAboutText, idle);
-
+function AboutPanel({
+  draft,
+  update,
+  stage,
+}: {
+  draft: Draft;
+  update: (fn: (d: Draft) => void) => void;
+  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+}) {
+  const about = draft.content.about;
   return (
     <Section title="About page">
       <ImageSwap
-        documentId="aboutPage"
-        fieldName="portrait"
         label="Your photo"
         current={about.portrait}
+        onPick={(file) =>
+          stage(file, (d, path, dataUrl) => {
+            d.content.about.portrait.src = dataUrl;
+            d.content.about.portrait.publishPath = path;
+          })
+        }
+        onAlt={(alt) => update((d) => { d.content.about.portrait.alt = alt; })}
       />
 
-      <form action={action} className="edForm">
-        <label className="edLabel" htmlFor="ah">
-          Heading
-        </label>
-        <input id="ah" name="heading" className="edInput" defaultValue={about.heading} maxLength={60} />
-
-        <label className="edLabel" htmlFor="ab">
-          About you
-        </label>
-        <p className="edNote">Leave a blank line between paragraphs.</p>
-        <textarea
-          id="ab"
-          name="body"
-          className="edInput edTextarea"
-          rows={14}
-          defaultValue={about.body.join("\n\n")}
-        />
-
-        <label className="edLabel" htmlFor="pq">
-          The one handwritten line
-        </label>
-        <input id="pq" name="pullQuote" className="edInput edScript" defaultValue={about.pullQuote} maxLength={60} />
-
-        <div className="edActions">
-          <button className="edButton edButtonPrimary" disabled={pending}>
-            {pending ? "Saving…" : "Save"}
-          </button>
-          <Status state={state} />
-        </div>
-      </form>
+      <div className="edForm">
+        <Field label="Heading">
+          <input className="edInput" value={about.heading} maxLength={60}
+            onChange={(e) => update((d) => { d.content.about.heading = e.target.value; })} />
+        </Field>
+        <Field label="About you" hint="Leave a blank line between paragraphs.">
+          <textarea className="edInput edTextarea" rows={14} value={about.body.join("\n\n")}
+            onChange={(e) =>
+              update((d) => {
+                d.content.about.body = e.target.value.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+              })
+            } />
+        </Field>
+        <Field label="The one handwritten line">
+          <input className="edInput edScript" value={about.pullQuote} maxLength={60}
+            onChange={(e) => update((d) => { d.content.about.pullQuote = e.target.value; })} />
+        </Field>
+      </div>
     </Section>
   );
 }
 
-/* ── Photos ──────────────────────────────────────────────────────────────── */
+function PhotosPanel({
+  draft,
+  update,
+  stage,
+  errors,
+}: {
+  draft: Draft;
+  update: (fn: (d: Draft) => void) => void;
+  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+  errors: string[];
+}) {
+  const { photos, categories } = draft.content;
+  const [category, setCategory] = useState(categories[0]?.slug ?? "portraits");
+  const featured = photos.filter((p) => p.featured).length;
 
-function UploadPanel({ categories }: { categories: Category[] }) {
-  const [state, action, pending] = useActionState(uploadPhotos, idle);
+  const move = (index: number, delta: number) =>
+    update((d) => {
+      const target = index + delta;
+      if (target < 0 || target >= d.content.photos.length) return;
+      const [moved] = d.content.photos.splice(index, 1);
+      d.content.photos.splice(target, 0, moved);
+    });
 
   return (
-    <form action={action} className="edForm edUpload">
-      <label className="edLabel" htmlFor="photos">
-        Add photos
-      </label>
-      <input
-        id="photos"
-        name="photos"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        multiple
-        className="edFile"
-        required
-      />
-      <p className="edNote">
-        Drag them straight off the camera — no need to resize. Where the photo was taken is removed
-        automatically before it is stored.
-      </p>
+    <Section
+      title="Photos"
+      intro={`${photos.length} on the site, ${featured} showing on the home page. The order here is the order they appear.`}
+    >
+      <div className="edForm edUpload">
+        <Field
+          label="Add photos"
+          hint="Drag them straight off the camera — no need to resize. Where the photo was taken is removed automatically."
+        >
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="edFile"
+            onChange={(e) => {
+              const files = Array.from(e.target.files ?? []);
+              for (const file of files) {
+                stage(file, (d, path, dataUrl) => {
+                  d.content.photos.push({
+                    _id: path,
+                    image: { src: dataUrl, width: 1600, height: 1067, lqip: "", alt: "", publishPath: path },
+                    categories: [category],
+                    featured: false,
+                    order: d.content.photos.length,
+                  });
+                });
+              }
+              e.target.value = "";
+            }}
+          />
+        </Field>
 
-      <div className="edRow">
-        <div>
-          <label className="edLabel" htmlFor="category">
-            Category
-          </label>
-          <select id="category" name="category" className="edInput" required defaultValue="">
-            <option value="" disabled>
-              Choose one
-            </option>
+        <Field label="Put them in">
+          <select className="edInput" value={category} onChange={(e) => setCategory(e.target.value)}>
             {categories.map((c) => (
-              <option key={c._id} value={c.slug}>
-                {c.title}
-              </option>
+              <option key={c._id} value={c.slug}>{c.title}</option>
             ))}
           </select>
-        </div>
-        <div className="edGrow">
-          <label className="edLabel" htmlFor="alt">
-            Describe them
-          </label>
-          <input
-            id="alt"
-            name="alt"
-            className="edInput"
-            placeholder="Bride and her dad laughing on the church steps"
-            minLength={8}
-            required
-          />
-        </div>
+        </Field>
+
+        {errors.length > 0 ? (
+          <div className="edErrorList">
+            {errors.map((e) => <p key={e} className="edError">{e}</p>)}
+          </div>
+        ) : null}
       </div>
 
-      <div className="edActions">
-        <button className="edButton edButtonPrimary" disabled={pending}>
-          {pending ? "Uploading…" : "Add photos"}
-        </button>
-        <Status state={state} />
-      </div>
-    </form>
-  );
-}
+      <ul className="edPhotoList">
+        {photos.map((photo, index) => {
+          const staged = photo.image.src.startsWith("data:");
+          return (
+            <li key={photo._id} className="edPhoto">
+              <div className="edPhotoThumb">
+                {staged ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- staged data URL, dimensions unknown until publish
+                  <img src={photo.image.src} alt={photo.image.alt || "New photo"} />
+                ) : (
+                  <Image src={photo.image.src} alt={photo.image.alt} width={photo.image.width}
+                    height={photo.image.height} placeholder="blur" blurDataURL={photo.image.lqip} sizes="160px" />
+                )}
+                {staged ? <p className="edStaged">New</p> : null}
+              </div>
 
-function PhotoRow({ photo, index, total }: { photo: Photo; index: number; total: number }) {
-  const [featuredState, featuredAction] = useActionState(setFeatured, idle);
-  const [altState, altAction, altPending] = useActionState(saveAltText, idle);
-  const [moveState, moveAction] = useActionState(movePhoto, idle);
-  const [deleteState, deleteAction, deletePending] = useActionState(deletePhoto, idle);
-  const [confirming, setConfirming] = useState(false);
+              <div className="edPhotoBody">
+                <input
+                  className="edInput edInputSmall"
+                  value={photo.image.alt}
+                  placeholder="Describe this photo — screen readers and Google both use it"
+                  onChange={(e) => update((d) => { d.content.photos[index].image.alt = e.target.value; })}
+                />
 
-  return (
-    <li className="edPhoto">
-      <div className="edPhotoThumb">
-        <Image
-          src={photo.image.src}
-          alt={photo.image.alt}
-          width={photo.image.width}
-          height={photo.image.height}
-          placeholder="blur"
-          blurDataURL={photo.image.lqip}
-          sizes="160px"
-        />
-      </div>
+                <div className="edPhotoControls">
+                  <button
+                    type="button"
+                    className={photo.featured ? "edStar edStarOn" : "edStar"}
+                    aria-pressed={photo.featured}
+                    onClick={() => update((d) => { d.content.photos[index].featured = !d.content.photos[index].featured; })}
+                  >
+                    {photo.featured ? "★ On home page" : "☆ Add to home page"}
+                  </button>
 
-      <div className="edPhotoBody">
-        <form action={altAction} className="edPhotoAlt">
-          <input type="hidden" name="id" value={photo._id} />
-          <label className="sr-only" htmlFor={`alt-${photo._id}`}>
-            Description
-          </label>
-          <input
-            id={`alt-${photo._id}`}
-            name="alt"
-            className="edInput edInputSmall"
-            defaultValue={photo.image.alt}
-            minLength={8}
-          />
-          <button className="edButtonSmall" disabled={altPending}>
-            {altPending ? "…" : "Save"}
-          </button>
-        </form>
-        <Status state={altState} />
+                  <div className="edMove">
+                    <button type="button" className="edButtonSmall" aria-label="Move earlier"
+                      disabled={index === 0} onClick={() => move(index, -1)}>↑</button>
+                    <button type="button" className="edButtonSmall" aria-label="Move later"
+                      disabled={index === photos.length - 1} onClick={() => move(index, 1)}>↓</button>
+                  </div>
 
-        <div className="edPhotoControls">
-          <form action={featuredAction}>
-            <input type="hidden" name="id" value={photo._id} />
-            <input type="hidden" name="featured" value={String(!photo.featured)} />
-            <button
-              className={photo.featured ? "edStar edStarOn" : "edStar"}
-              aria-pressed={photo.featured}
-            >
-              {photo.featured ? "★ On home page" : "☆ Add to home page"}
-            </button>
-          </form>
-
-          <form action={moveAction} className="edMove">
-            <input type="hidden" name="id" value={photo._id} />
-            <button name="direction" value="up" className="edButtonSmall" disabled={index === 0} aria-label="Move earlier">
-              ↑
-            </button>
-            <button name="direction" value="down" className="edButtonSmall" disabled={index === total - 1} aria-label="Move later">
-              ↓
-            </button>
-          </form>
-
-          {confirming ? (
-            <form action={deleteAction} className="edDelete">
-              <input type="hidden" name="id" value={photo._id} />
-              <input
-                name="confirm"
-                className="edInput edInputSmall"
-                placeholder="Type DELETE"
-                aria-label="Type DELETE to confirm"
-                autoFocus
-              />
-              <button className="edButtonSmall edButtonDanger" disabled={deletePending}>
-                {deletePending ? "…" : "Delete"}
-              </button>
-              <button type="button" className="edButtonSmall" onClick={() => setConfirming(false)}>
-                Cancel
-              </button>
-            </form>
-          ) : (
-            <button type="button" className="edButtonSmall edLink" onClick={() => setConfirming(true)}>
-              Delete
-            </button>
-          )}
-        </div>
-        <Status state={moveState} />
-        <Status state={featuredState} />
-        <Status state={deleteState} />
-      </div>
-    </li>
+                  <button
+                    type="button"
+                    className="edButtonSmall edLink"
+                    onClick={() =>
+                      update((d) => {
+                        const removed = d.content.photos.splice(index, 1)[0];
+                        const path = removed.image.publishPath;
+                        if (path) d.newImages = d.newImages.filter((i) => i.path !== path);
+                      })
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </Section>
   );
 }
 
@@ -449,22 +469,51 @@ const TABS = ["Photos", "Home page", "About page", "Banner"] as const;
 type Tab = (typeof TABS)[number];
 
 export function Editor({
-  settings,
-  home,
-  about,
-  photos,
-  categories,
-  readOnlyReason,
+  published,
+  publishReady,
+  publishReason,
 }: {
-  settings: SiteSettings;
-  home: HomeContent;
-  about: AboutContent;
-  photos: Photo[];
-  categories: Category[];
-  readOnlyReason: string | null;
+  published: SiteContent;
+  publishReady: boolean;
+  publishReason: string | null;
 }) {
   const [tab, setTab] = useState<Tab>("Photos");
-  const featuredCount = photos.filter((p) => p.featured).length;
+  const { draft, update, discard, dirty, loaded } = useDraft(published);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [state, formAction, pending] = useActionState(publish, idle);
+
+  // Once a publish succeeds the draft is the published state, so clear it.
+  useEffect(() => {
+    if (state.ok && state.message) {
+      window.localStorage.removeItem(DRAFT_KEY);
+    }
+  }, [state]);
+
+  const stage = useCallback(
+    async (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => {
+      const ext = file.name.match(/\.(jpe?g|png|webp)$/i)?.[0] ?? ".jpg";
+      const path = `public/photos/${slugForUpload(file.name)}${ext.toLowerCase()}`;
+      const result = await stageFile(file, path);
+
+      if (typeof result === "string") {
+        setErrors((e) => [...e, result]);
+        return;
+      }
+
+      setErrors([]);
+      update((d) => {
+        d.newImages.push(result);
+        assign(d, path.replace(/^public/, ""), result.dataUrl);
+      });
+    },
+    [update],
+  );
+
+  // Server-side rendering has no draft yet; wait for the restore so the two
+  // never disagree about what is on screen.
+  if (!loaded) return <div className="ed"><p className="edIntro">Loading…</p></div>;
+
+  const staged = draft.newImages.length;
 
   return (
     <div className="ed">
@@ -474,53 +523,66 @@ export function Editor({
           <h1 className="edTitle display">Edit your site</h1>
         </div>
         <div className="edHeaderActions">
-          <a className="edButtonSmall" href="/" target="_blank" rel="noreferrer">
-            View site ↗
-          </a>
+          <a className="edButtonSmall" href="/" target="_blank" rel="noreferrer">View site ↗</a>
           <form action={signOut}>
             <button className="edButtonSmall">Sign out</button>
           </form>
         </div>
       </header>
 
-      {readOnlyReason ? (
+      {!publishReady ? (
         <p className="edBanner" role="alert">
-          <strong>Nothing can be saved yet.</strong> {readOnlyReason}
+          <strong>Changes cannot be published yet.</strong> {publishReason}
         </p>
       ) : null}
 
       <nav className="edTabs" aria-label="Sections">
         {TABS.map((name) => (
-          <button
-            key={name}
-            className="edTab"
-            aria-current={tab === name ? "page" : undefined}
-            onClick={() => setTab(name)}
-          >
-            {name}
-          </button>
+          <button key={name} className="edTab" aria-current={tab === name ? "page" : undefined}
+            onClick={() => setTab(name)}>{name}</button>
         ))}
       </nav>
 
       <main className="edMain">
-        {tab === "Photos" && (
-          <Section
-            title="Photos"
-            intro={`${photos.length} on the site, ${featuredCount} showing on the home page. The order here is the order they appear.`}
-          >
-            <UploadPanel categories={categories} />
-            <ul className="edPhotoList">
-              {photos.map((photo, i) => (
-                <PhotoRow key={photo._id} photo={photo} index={i} total={photos.length} />
-              ))}
-            </ul>
-          </Section>
-        )}
-
-        {tab === "Home page" && <HomePanel home={home} />}
-        {tab === "About page" && <AboutPanel about={about} />}
-        {tab === "Banner" && <BannerPanel settings={settings} />}
+        {tab === "Photos" && <PhotosPanel draft={draft} update={update} stage={stage} errors={errors} />}
+        {tab === "Home page" && <HomePanel draft={draft} update={update} stage={stage} />}
+        {tab === "About page" && <AboutPanel draft={draft} update={update} stage={stage} />}
+        {tab === "Banner" && <BannerPanel draft={draft} update={update} />}
       </main>
+
+      {/* Always visible, so it is never a question where the save button went. */}
+      <div className="edPublishBar" data-dirty={dirty}>
+        <div className="edPublishState">
+          {dirty ? (
+            <>
+              <strong>Unpublished changes</strong>
+              {staged > 0 ? ` · ${staged} new photo${staged === 1 ? "" : "s"}` : ""}
+            </>
+          ) : (
+            "Everything is published."
+          )}
+          {state.message ? (
+            <p className={state.ok ? "edOk" : "edError"} role="status">
+              {state.message}
+              {state.url ? <> <a href={state.url} target="_blank" rel="noreferrer">View the change ↗</a></> : null}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="edPublishActions">
+          {dirty ? (
+            <button type="button" className="edButtonSmall edLink" onClick={discard} disabled={pending}>
+              Discard
+            </button>
+          ) : null}
+          <form action={formAction}>
+            <input type="hidden" name="draft" value={JSON.stringify(draft)} />
+            <button className="edButton edButtonPrimary" disabled={!dirty || pending || !publishReady}>
+              {pending ? "Publishing…" : "Publish changes"}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

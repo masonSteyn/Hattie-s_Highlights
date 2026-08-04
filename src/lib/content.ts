@@ -1,29 +1,24 @@
 /**
  * Content access layer — the only module that knows where content comes from.
  *
- * Each function asks Sanity first and falls back to the local fixtures when
- * there is no project configured, or when a document has not been created yet.
- * Pages and components see one shape either way, which is what let the whole
- * site be built and reviewed before any accounts existed.
+ * Everything lives in `content/site.json`, committed to the repo alongside the
+ * photographs in `public/photos`. That has three consequences worth stating:
  *
- * Once the dataset is populated the fallbacks stop being reached; deleting
- * `fixtures/` is then a one-line change here rather than a rewrite.
+ *  - **No network, no service, no bill.** The store is imported at build time,
+ *    so a page render costs nothing beyond reading memory. Nothing here can be
+ *    slow, rate-limited, or down.
+ *  - **Every change is a commit.** The editor publishes by committing to the
+ *    repo, so the content has a full history and any change can be reverted by
+ *    someone who knows git. That is the closest thing to an undo button a
+ *    non-technical editor is going to get.
+ *  - **Publishing is a deploy.** A change is live once Vercel finishes
+ *    rebuilding, roughly a minute or two, rather than instantly.
+ *
+ * Components never see any of this. They call these functions and get plain
+ * objects.
  */
 
-import { isSanityConfigured } from "../../sanity/env";
-import { query } from "../sanity/client";
-import {
-  aboutQuery,
-  bookingQuery,
-  categoriesQuery,
-  contactQuery,
-  featuredPhotosQuery,
-  homeQuery,
-  photosQuery,
-  sessionTypesQuery,
-  settingsQuery,
-} from "../sanity/queries";
-import * as fixture from "./fixtures/content";
+import store from "../../content/site.json";
 import type {
   AboutContent,
   BookingContent,
@@ -36,82 +31,85 @@ import type {
   SiteSettings,
 } from "./types";
 
-export { isSanityConfigured };
+/* The JSON is the source of truth for shape as well as content; these casts are
+   the one place the two are tied together. */
+const site = store as unknown as {
+  photos: Photo[];
+  categories: Category[];
+  sessionTypes: SessionType[];
+  home: HomeContent;
+  about: AboutContent;
+  booking: BookingContent;
+  contact: ContactContent;
+  settings: SiteSettings;
+};
 
-/**
- * Sanity returns null for a document that has not been created yet, and empty
- * arrays for types with no entries. Both mean "nothing published", and both
- * should show the fixture rather than a blank page.
- */
-async function fromSanityOr<T>(
-  groq: string,
-  fallback: T,
-  params: Record<string, unknown> = {},
-  tags: string[] = [],
-): Promise<T> {
-  if (!isSanityConfigured) return fallback;
-  const result = await query<T>(groq, params, tags);
-  if (result === null || result === undefined) return fallback;
-  if (Array.isArray(result) && result.length === 0) return fallback;
-  return result;
+export type SiteContent = typeof site;
+
+/** The whole store, for the editor to load current values from. */
+export function getSiteContent(): SiteContent {
+  return site;
 }
 
 export async function getSettings(): Promise<SiteSettings> {
-  return fromSanityOr(settingsQuery, fixture.settings, {}, ["settings"]);
+  return site.settings;
 }
 
 export async function getHome(): Promise<HomeContent> {
-  return fromSanityOr(homeQuery, fixture.home, {}, ["home", "photo"]);
+  return site.home;
 }
 
 export async function getAbout(): Promise<AboutContent> {
-  return fromSanityOr(aboutQuery, fixture.about, {}, ["about"]);
+  return site.about;
 }
 
 export async function getBooking(): Promise<BookingContent> {
-  return fromSanityOr(bookingQuery, fixture.booking, {}, ["booking"]);
+  return site.booking;
 }
 
 export async function getContact(): Promise<ContactContent> {
-  return fromSanityOr(contactQuery, fixture.contact, {}, ["contact"]);
+  return site.contact;
 }
 
 export async function getCategories(): Promise<Category[]> {
-  return fromSanityOr(categoriesQuery, fixture.categories, {}, ["category"]);
+  return [...site.categories].sort((a, b) => Number(a.order) - Number(b.order));
 }
 
 export async function getSessionTypes(): Promise<SessionType[]> {
-  return fromSanityOr(sessionTypesQuery, fixture.sessionTypes, {}, ["sessionType"]);
+  return [...site.sessionTypes].sort((a, b) => Number(a.order) - Number(b.order));
 }
 
 /**
- * Budget ranges have no CMS document behind them on purpose. They are the one
- * list Hattie has no reason to edit — changing them changes how enquiries are
+ * Budget ranges have no editable form on purpose. They decide how enquiries are
  * bucketed, which is a decision about the business rather than about content.
  */
+const budgetRanges: BudgetRange[] = [
+  { value: "under-500", label: "Under $500" },
+  { value: "500-1500", label: "$500 – $1,500" },
+  { value: "1500-3000", label: "$1,500 – $3,000" },
+  { value: "3000-plus", label: "$3,000+" },
+  { value: "unsure", label: "Not sure yet" },
+];
+
 export async function getBudgetRanges(): Promise<BudgetRange[]> {
-  return fixture.budgetRanges;
+  return budgetRanges;
 }
 
-/** Home teaser grid: starred photos, in her drag order, capped. */
+/** Home teaser grid: starred photos, in her order, capped. */
 export async function getFeaturedPhotos(limit = 6): Promise<Photo[]> {
-  const fallback = fixture.photos
+  return site.photos
     .filter((p) => p.featured)
-    .sort((x, y) => Number(x.order) - Number(y.order))
+    .sort((a, b) => Number(a.order) - Number(b.order))
     .slice(0, limit);
-
-  return fromSanityOr(featuredPhotosQuery, fallback, { limit }, ["photo"]);
 }
 
 /**
- * MOCK_PHOTOS exists so the portfolio can be load-tested at a realistic library
- * size without inventing a hundred stock images: it cycles the available set up
- * to the requested count with unique ids. Fixture-only — it has no effect once
- * Sanity is supplying the photos.
+ * MOCK_PHOTOS cycles the library up to a given count so the portfolio can be
+ * load-tested at a realistic size. Development only.
  */
 function withStressCount(list: Photo[]): Photo[] {
   const target = Number(process.env.MOCK_PHOTOS);
-  if (isSanityConfigured || !Number.isFinite(target) || target <= list.length) return list;
+  if (!Number.isFinite(target) || target <= list.length) return list;
 
   return Array.from({ length: target }, (_, i) => {
     const source = list[i % list.length];
@@ -120,16 +118,9 @@ function withStressCount(list: Photo[]): Photo[] {
 }
 
 export async function getPhotos(category?: string): Promise<Photo[]> {
-  const fallback = fixture.photos
+  const filtered = site.photos
     .filter((p) => !category || p.categories.includes(category))
-    .sort((x, y) => Number(x.order) - Number(y.order));
+    .sort((a, b) => Number(a.order) - Number(b.order));
 
-  const photos = await fromSanityOr(
-    photosQuery,
-    fallback,
-    { category: category ?? null },
-    ["photo"],
-  );
-
-  return withStressCount(photos);
+  return withStressCount(filtered);
 }

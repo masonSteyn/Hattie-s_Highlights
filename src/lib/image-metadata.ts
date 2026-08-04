@@ -6,8 +6,8 @@
  * the brief asks for the original to be stored untouched. Removing whole
  * segments from the container leaves every entropy-coded pixel byte exactly as
  * the camera wrote it while deleting the metadata blocks outright. It is also
- * isomorphic — no native dependency — so the same function runs in the Studio
- * before a byte leaves Hattie's laptop, and on the server if we ever need it.
+ * isomorphic — no native dependency — so the same function runs in the browser
+ * for instant feedback and again on the server, where it actually counts.
  *
  * The thing this actually protects: a Lightroom export carries GPS coordinates
  * from the shoot. Publishing those alongside a family's portraits discloses

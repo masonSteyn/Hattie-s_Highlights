@@ -55,7 +55,8 @@ On the **Photos** tab:
 3. Write a **description** (see below — this one matters).
 4. Tap **Add photos**.
 
-They appear on the site straight away.
+They appear in the list straight away, marked **New** — they go live when you
+publish.
 
 ### Drag them straight off the camera
 
@@ -140,16 +141,26 @@ Prices and categories aren't editable here. Ask and they'll be changed for you.
 
 ---
 
-## Saving
+## Publishing
 
-Each box has its own **Save** button, and a short message appears to confirm it
-worked. If you don't see that message, it didn't save — try again.
+Nothing you change goes live straight away. Everything you do is held as a
+draft, and a bar at the bottom of the screen tells you whether there's anything
+waiting:
 
-Photos are different: adding, starring, reordering, and deleting all happen the
-moment you tap. There's no separate save for those.
+> **Unpublished changes · 2 new photos**
 
-Deleting asks you to type DELETE first. That's the one thing here that can't be
-undone.
+When you're happy, tap **Publish changes**. Then give it a minute or two — the
+site rebuilds itself and your changes appear.
+
+Two things worth knowing:
+
+- **Your draft is saved as you go.** Close the tab, come back tomorrow, and
+  everything you'd done is still waiting. Nothing is lost.
+- **Discard throws the draft away** and puts everything back to how the site
+  currently looks. It only affects unpublished changes.
+
+If you remove a photo by mistake and have already published, it can still be
+recovered — every publish is saved permanently. Just ask.
 
 ---
 
@@ -183,8 +194,9 @@ that — a handful of recent reviews beats almost anything else you could do.
 why. Usually it isn't actually a photo (a PDF or an odd screenshot), or it's
 enormous. The other photos in the same batch still go through.
 
-**I changed something and the site looks the same.** Check you saw the little
-confirmation message. If you did, reload the site page itself.
+**I changed something and the site looks the same.** Did you tap **Publish
+changes**? If you did, give it two minutes and reload — the site takes a moment
+to rebuild.
 
 **It asked for my password again.** Normal — it does that every eight hours.
 
@@ -202,5 +214,5 @@ calendar and always works.
 - **hattieshighlights.com/settings**, type your password
 - Add photos, describe them properly, star the good ones
 - Keep the availability banner honest
-- Tap **Save**
+- Tap **Publish changes** and wait a minute
 - Claim your Google Business Profile

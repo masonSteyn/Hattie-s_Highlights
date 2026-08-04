@@ -6,8 +6,8 @@ import "./editor-base.css";
 /**
  * Root layout for the editor.
  *
- * Its own <html>, like the Studio: this is a tool, not a page of the site, and
- * it should not inherit the sidebar, the availability banner, or the logo band.
+ * Its own <html>: this is a tool, not a page of the site, and it should not
+ * inherit the sidebar, the availability banner, or the logo band.
  * It does keep the site's typefaces and colours, so it feels like the same
  * place rather than like a different piece of software.
  */

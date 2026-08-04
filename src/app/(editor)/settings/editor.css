@@ -468,3 +468,63 @@
     width: 100%;
   }
 }
+
+/* --- Publish bar ----------------------------------------------------------
+   Pinned to the bottom so the one action that makes anything real is never
+   scrolled off. It states plainly whether there is anything unpublished —
+   the single most important thing for someone who edits once a fortnight and
+   will not remember what they did last time. */
+.edPublishBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-5);
+  margin-top: var(--s-8);
+  padding: var(--s-4) var(--s-5);
+  border-top: 1px solid var(--rule-sage);
+  background: var(--cream);
+}
+
+.edPublishBar[data-dirty="true"] {
+  border-top-color: var(--coral);
+  background: color-mix(in srgb, var(--coral) 8%, var(--cream));
+}
+
+.edPublishState {
+  font-size: 0.9375rem;
+  min-width: 0;
+}
+
+.edPublishActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+/* Marks anything held locally but not yet committed. */
+.edStaged {
+  margin-top: var(--s-2);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--ink);
+  background: var(--blush);
+  display: inline-block;
+  padding: 2px var(--s-2);
+  border-radius: var(--radius-control);
+}
+
+.edSwapPreview img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+.edErrorList {
+  margin-top: var(--s-4);
+}

@@ -263,8 +263,8 @@
 /* --- Admin entry point ----------------------------------------------------
    Quiet, not hidden. Sits below the social row behind a hairline so it reads
    as a site detail rather than as navigation. A plain <a> rather than a
-   <Link>: /studio is a separate root layout, and a full page load is both
-   correct and cheaper than pulling the editor into the client router. */
+   <Link>: /settings is a separate root layout, so following it is a full page
+   load regardless. */
 .adminRow {
   margin-top: var(--s-4);
   padding-top: var(--s-4);

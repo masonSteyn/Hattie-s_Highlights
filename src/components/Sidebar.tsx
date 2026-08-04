@@ -66,12 +66,11 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
  * having to remember a URL — which is the failure mode that matters for
  * someone who edits the site once a fortnight.
  *
- * It is not a security boundary. /studio is unguessable-by-obscurity at best;
- * what actually protects it is that Sanity refuses to load anything without a
- * signed-in account. The route is also noindex + nofollow, so it stays out of
- * search results whether it is linked or not.
+ * It is not a security boundary. What actually protects /settings is the
+ * password on it; the route is also noindex + nofollow, so it stays out of
+ * search results whether it is linked from here or not.
  *
- * prefetch is off: /studio has its own root layout, so following this link is a
+ * prefetch is off: /settings has its own root layout, so following this link is a
  * full page load regardless, and prefetching would pull the entire editor
  * bundle onto every page of the public site.
  */

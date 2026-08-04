@@ -2,8 +2,11 @@
 
 Portfolio and booking site for a portrait and event photographer.
 
-Next.js 16 (App Router) · Sanity for content and media · Resend for mail ·
-deployed to Vercel.
+Next.js 16 (App Router) · content and photos committed to this repo ·
+Resend for mail · deployed to Vercel.
+
+No CMS, no object storage, no monthly bill. The editor publishes by committing
+to this repository, which makes Vercel rebuild.
 
 For the client-facing guide, see **[HATTIE-GUIDE.md](./HATTIE-GUIDE.md)**.
 
@@ -18,70 +21,67 @@ npm run dev
 
 Open http://localhost:3000.
 
-**It runs with no configuration at all.** With no Sanity project set, the site
-serves bundled fixture content from `src/lib/fixtures/` and sample photos from
-`public/mock/`, so the whole thing can be built and reviewed before any accounts
-exist. `/studio` shows setup instructions instead of erroring.
+**It runs with no configuration at all.** Content comes from
+`content/site.json` and photos from `public/photos/`, both committed to this
+repo, so the site works offline and before any account exists. `/settings`
+explains what to set rather than erroring.
 
 ---
 
-## Connecting the CMS
+## Setting up the editor
 
-This is the only setup step that genuinely needs a human — creating the project
-requires signing in to Sanity.
+Two things, both one-time.
 
-**1. Create the project**
-
-```bash
-npx sanity@latest init
-```
-
-Choose *Use the default dataset configuration* and note the project id it prints.
-
-**2. Point the site at it**
-
-```bash
-cp .env.example .env.local
-```
-
-Set `NEXT_PUBLIC_SANITY_PROJECT_ID` to that id.
-
-**3. Import the starter content**
-
-Create an **Editor** token at [sanity.io/manage](https://sanity.io/manage) →
-your project → API → Tokens, and put it in `.env.local` as
-`SANITY_API_WRITE_TOKEN`. Then:
-
-```bash
-npm run seed:dry
-```
-
-```bash
-npm run seed
-```
-
-This uploads all 19 photos and creates every page, category, and session type,
-so the Studio opens on the real site rather than on empty forms. It uses
-`createOrReplace`, so re-running it converges rather than duplicating.
-
-Keep the write token: unlike a pure-Studio setup, the editor at `/settings`
-uses it to save Hattie's changes server-side. It is the one credential here that
-can destroy data, so it belongs only in `.env.local` and in Vercel's environment
-variables — never in the repo and never prefixed `NEXT_PUBLIC_`.
-
-**4. Add the editor credentials**
-
-The site has its own editor at `/settings`, so Hattie never needs a Sanity
-account. Generate the two secrets:
+**1. A password for Hattie**
 
 ```bash
 node scripts/set-password.mjs "a long password"
 ```
 
-Paste both lines into `.env.local`. Unlike the seed token, `SANITY_API_WRITE_TOKEN`
-**stays** — the editor writes through it server-side.
+Paste both printed lines into `.env.local`. The password itself is never stored
+— only a scrypt hash of it — so it cannot be recovered, only replaced.
 
-Then give Hattie the password. That is the whole handover.
+**2. A GitHub token so the editor can publish**
+
+github.com/settings/personal-access-tokens → **Fine-grained token**, scoped to
+**this repository only**, with **Contents: Read and write**. Nothing else.
+
+Add to `.env.local`:
+
+```bash
+GITHUB_TOKEN=github_pat_...
+```
+
+Also set `GITHUB_REPO=your-username/hatties-highlights`.
+
+That is the whole setup. There is no CMS account, no storage service, and
+nothing for Hattie to sign up for.
+
+---
+
+## How publishing works
+
+Hattie edits at `/settings`. Nothing is written as she types — changes are held
+in her browser, backed up to localStorage so a closed tab does not lose an
+afternoon. When she taps **Publish changes**:
+
+1. The whole draft is posted to a server action.
+2. Every new photo is re-validated and metadata-stripped **on the server**, so
+   it does not matter what the browser sent.
+3. Dimensions and a blur placeholder are derived with `sharp`.
+4. Photos and `content/site.json` go up as **one commit** via GitHub's Git Data
+   API — all of it lands or none of it does.
+5. Vercel sees the push and rebuilds. Live in a minute or two.
+
+The trade this makes: publishing is not instant. In exchange there is no
+service to pay for or go down, and every change is a commit that can be
+reverted.
+
+Regenerate the store from the files on disk at any time:
+
+```bash
+npm run content
+```
 
 ---
 
@@ -91,9 +91,9 @@ Everything is documented in `.env.example`. In short:
 
 | Variable | Needed | Notes |
 |---|---|---|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | for the CMS | Public by design — identifies a dataset, grants nothing |
-| `NEXT_PUBLIC_SANITY_DATASET` | for the CMS | `production` |
-| `SANITY_API_WRITE_TOKEN` | seeding + editor | Server-only. The editor writes through this |
+| `GITHUB_TOKEN` | for publishing | Fine-grained, this repo only, Contents: read and write |
+| `GITHUB_REPO` | for publishing | `owner/repository` |
+| `GITHUB_BRANCH` | optional | Defaults to `main` |
 | `EDITOR_PASSWORD_HASH` | for the editor | From `scripts/set-password.mjs`. Colon-separated, never `$` |
 | `EDITOR_SESSION_SECRET` | for the editor | 32+ chars. Changing it signs everyone out |
 | `RESEND_API_KEY` | for the contact form | Server-only |
@@ -104,11 +104,10 @@ Everything is documented in `.env.example`. In short:
 Anything not prefixed `NEXT_PUBLIC_` is server-only and never reaches the
 browser — verified by grepping the built client chunks for each name.
 
-The write token *is* used by the running site, but only inside
-`src/sanity/write.ts`, which carries the `server-only` guard and is imported
-exclusively by server actions that check the session first. It never reaches a
-client bundle. The Studio at `/studio` is separate and authenticates each editor
-against Sanity directly.
+The GitHub token is used by the running site, but only inside
+`src/lib/github.ts`, which carries the `server-only` guard and is imported
+exclusively by the publish action after it has checked the session. It never
+reaches a client bundle — verified by grepping the built chunks.
 
 Two behaviours worth knowing:
 
@@ -127,17 +126,14 @@ Two behaviours worth knowing:
 2. Vercel → **Add New → Project** → import the repo. The framework is detected;
    no build settings to change.
 3. Add every variable from the table above under **Settings → Environment
-   Variables** (Production *and* Preview). `SANITY_API_WRITE_TOKEN`,
+   Variables** (Production *and* Preview). `GITHUB_TOKEN`, `GITHUB_REPO`,
    `EDITOR_PASSWORD_HASH`, and `EDITOR_SESSION_SECRET` are all required — the
-   editor cannot save without the first and will not let anyone in without the
-   other two.
+   editor cannot publish without the first two and will not let anyone in
+   without the other two.
 4. Deploy.
 5. **Settings → Domains** → add `hattieshighlights.com` and follow the DNS
    records it gives you.
-6. In [sanity.io/manage](https://sanity.io/manage) → API → **CORS origins**, add
-   `https://hattieshighlights.com` with credentials allowed. Without this the
-   Studio loads on the live domain but cannot talk to Sanity.
-7. Set `NEXT_PUBLIC_SITE_URL` to the real domain and redeploy.
+6. Set `NEXT_PUBLIC_SITE_URL` to the real domain and redeploy.
 
 ---
 
@@ -173,36 +169,26 @@ To load-test the portfolio at a realistic library size:
 MOCK_PHOTOS=120 npm run build && MOCK_PHOTOS=120 npm start
 ```
 
-Fixture-only; it has no effect once Sanity supplies the photos.
+Development only — it cycles the real library up to the requested count.
 
 ---
 
 ## How it fits together
 
 ```
-src/app/(site)/      the public site        — its own root layout
-src/app/(editor)/    Hattie's editor        — password login at /settings
-src/app/(studio)/    the full Sanity Studio — for you, not for her
-src/lib/auth.ts      session signing        │ the login, split so the CLI
-src/lib/password.ts  scrypt hashing         │ script can use the hashing
-src/sanity/write.ts  the ONLY module that can change content
-src/lib/content.ts   the ONLY module that knows where content comes from
-src/lib/fixtures/    fallback content, deletable once Sanity is populated
+content/site.json    all editable content — the whole "CMS"
+public/photos/       every photograph, served straight from the repo
+
+src/app/(site)/      the public site  — its own root layout
+src/app/(editor)/    the editor       — password login at /settings
+src/lib/content.ts   the ONLY module that reads content
+src/lib/github.ts    the ONLY module that writes it
+src/lib/auth.ts      session signing  │ split so the set-password CLI
+src/lib/password.ts  scrypt hashing   │ script can import the hashing
 ```
 
-### Two doors, on purpose
-
-- **`/settings`** — password, four tabs, photos and headline text. This is what
-  Hattie uses and all she ever needs.
-- **`/studio`** — the full Sanity Studio, for prices, categories, SEO, and
-  anything structural. Needs a Sanity account, so it is yours rather than hers.
-
-Both write to the same dataset. The ⚙ in the site's sidebar points at
-`/settings`.
-
-`content.ts` asks Sanity and falls back to the fixtures per query, so a document
-that has not been created yet shows sample content rather than a blank page.
-Components never know which source answered.
+`content/site.json` is imported at build time, so rendering a page costs a
+memory read. There is nothing to be slow, rate-limited, or down.
 
 ### Notes for whoever works on this next
 
@@ -210,15 +196,13 @@ Components never know which source answered.
   the output, where relative `.ts` and `.json` imports do not resolve. The
   scheduling allowlist is therefore duplicated into it, with
   `npm run check:providers` failing if the copies drift.
-- **Images can only enter through one door.** `form.image.directUploads` is off
-  in `sanity.config.ts`, so Sanity's own drag-and-drop is disabled and the
-  custom asset source in `sanity/components/CleanUploadSource.tsx` is the sole
-  entry point. That is what makes magic-byte validation and EXIF stripping a
-  guarantee rather than a suggestion. Do not re-enable it.
-- **The CSP is split** three ways: `/studio`, `/settings`, and everything else.
-  The public policy has no `unsafe-eval`. The
-  `/:path((?!studio|settings).*)` lookahead matters — without it the catch-all
-  also matches those two and, being declared last, wins.
+- **Images are validated and stripped on the server**, in the publish action,
+  not in the browser. The browser copy exists only for instant feedback. Keep it
+  that way: the server copy is the one that is a guarantee.
+- **The CSP is split** between `/settings` and everything else. The
+  `/:path((?!settings).*)` lookahead matters — without it the catch-all also
+  matches the editor and, being declared last, wins, losing its noindex and
+  no-store headers.
 - **`npm install <pkg>` has rewritten `package.json` from scratch here**,
   dropping every other dependency and the security overrides. Back it up before
   adding packages and check the diff afterwards.

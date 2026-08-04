@@ -1,0 +1,409 @@
+{
+  "photos": [
+    {
+      "_id": "p1",
+      "image": {
+        "src": "/photos/p1.jpg",
+        "width": 2000,
+        "height": 1333,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAEEBf/EACQQAAIBBAEDBQEAAAAAAAAAAAECAwAEESExBRJRExQiI0GB/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgAB/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEB/9oADAMBAAIRAxEAPwCsdVe7LzKzxvCugG+LZ4yPO6d31WSLplwm2csFVic7POePFZUAEp9IAIspAYjmojeSe4kiB+snt7Sc8ftDK25DF3eHYeXf9opljk5yd+aKgr//2Q==",
+        "alt": "A woman outdoors at golden hour, backlit by the last of the sun"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 0
+    },
+    {
+      "_id": "w1",
+      "image": {
+        "src": "/photos/w1.jpg",
+        "width": 1600,
+        "height": 933,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAMABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAUGAgT/xAAiEAACAQQCAQUAAAAAAAAAAAABAgMABBEhBRJRBjJBYYH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A7rDlZbqZYikTHqSxRjr8IrHMclJZI7o4DRlei405Ochvqpe1kdJVKOynyDimHqP2Mh2FbWTQOYufs5IY5HfqzqCV8H5FFRglaJQq4IxndFB//9k=",
+        "alt": "A bride and groom under a lifted veil, photographed in black and white"
+      },
+      "categories": [
+        "weddings"
+      ],
+      "featured": false,
+      "order": 1
+    },
+    {
+      "_id": "p5",
+      "image": {
+        "src": "/photos/p5.jpg",
+        "width": 1600,
+        "height": 2400,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAwX/xAAgEAACAQQDAAMAAAAAAAAAAAABAhEAAwQSISIxE3GB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAwT/xAAXEQEBAQEAAAAAAAAAAAAAAAABADER/9oADAMBAAIRAxEAPwDmsrXcl9zcFlACQnrGm31JWW6mO3tbnCyDYGUhXUtAAcT+1NkWDb1JvW33EwDyPuj4rUCDs/yNbxCy8EtFRqS8kkzNFFIawOF//9k=",
+        "alt": "A portrait against a deep red wall, shoulders squared to the camera"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 2
+    },
+    {
+      "_id": "n3",
+      "image": {
+        "src": "/photos/n3.jpg",
+        "width": 1800,
+        "height": 2700,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAUBAwb/xAAgEAACAgIABwAAAAAAAAAAAAAAAgEDBRETISIxUZGx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgH/xAAYEQEBAAMAAAAAAAAAAAAAAAAAAhESUf/aAAwDAQACEQMRAD8Af10LrtBbwE8QZRMzesdTr8IfO3RPJ/QcUu08JNhsAGD/2Q==",
+        "alt": "Layered ridge lines fading into haze at the end of the day"
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": true,
+      "order": 3
+    },
+    {
+      "_id": "p3",
+      "image": {
+        "src": "/photos/p3.jpg",
+        "width": 1600,
+        "height": 1067,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAAD/8QAIxAAAgICAQMFAQAAAAAAAAAAAQIDBAARBRIiMRRBQ1GSof/EABYBAQEBAAAAAAAAAAAAAAAAAAECA//EABoRAAIDAQEAAAAAAAAAAAAAAAABAhEhYRL/2gAMAwEAAhEDEQA/AFtyFurTlmchwqk93kZhXuz1po0R2czj5G6hv7GB5Dk565WKLpAZdkkbxLRpDRN9V3MqAr1HYG/b+4yVNBDU8ENb5LZ7k/Iyw/qGYBteRvLL89M74f/Z",
+        "alt": "A portrait taken beside open water, soft afternoon light"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 4
+    },
+    {
+      "_id": "w3",
+      "image": {
+        "src": "/photos/w3.jpg",
+        "width": 1600,
+        "height": 2400,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMFBP/EACAQAAIBBAIDAQAAAAAAAAAAAAECAwAEESESEwUUQZH/xAAWAQEBAQAAAAAAAAAAAAAAAAACAAH/xAAVEQEBAAAAAAAAAAAAAAAAAAAAEf/aAAwDAQACEQMRAD8AtXUsdsIgwBMjhFApvUv1QakRXfttBz3iTRIx82fymXPkuiUrxZhnRXJqoxBFy4hTAAAXVZ5LydSMOaKKwn//2Q==",
+        "alt": "A bride on a pebble beach, veil running the full length of the shore"
+      },
+      "categories": [
+        "weddings"
+      ],
+      "featured": false,
+      "order": 5
+    },
+    {
+      "_id": "p6",
+      "image": {
+        "src": "/photos/p6.jpg",
+        "width": 2000,
+        "height": 3000,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIFBP/EACQQAAEDAwQBBQAAAAAAAAAAAAEAAgMEERIhIjFBExRxodHw/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgT/xAAXEQEBAQEAAAAAAAAAAAAAAAAAATER/9oADAMBAAIRAxEAPwDBRUAla3A4uBuQe0npYxYTAtf2B7qtHLHQwZRPc2Q7Df8AaJKu4lAb4nNxBGWqn5dJNdIdwsNPlM2rkbtAbYcc/aEKi4Mf/9k=",
+        "alt": "A broad fig tree from below, sun breaking through the canopy"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 6
+    },
+    {
+      "_id": "e3",
+      "image": {
+        "src": "/photos/e3.jpg",
+        "width": 1800,
+        "height": 1200,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAUCAwT/xAAkEAACAgEBCAMAAAAAAAAAAAABAgMRAAUEExQhIjFBYSNCUf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFxEBAQEBAAAAAAAAAAAAAAAAEQABMf/aAAwDAQACEQMRAD8AZGBJ4S0dg0D0+fNj3mKWWWO5wu8iS0JI5jn5/cv0qU8FCTdrS98YSIvS3Ols0OxyBxq5ssGr7n41UIB9VY0MMlLp+zbRK0jK6knsresMDYb/2Q==",
+        "alt": "A reception table set with linen, wildflowers, and mismatched glassware"
+      },
+      "categories": [
+        "events"
+      ],
+      "featured": false,
+      "order": 7
+    },
+    {
+      "_id": "p4",
+      "image": {
+        "src": "/photos/p4.jpg",
+        "width": 1600,
+        "height": 2400,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIEBf/EACAQAAIDAAEEAwAAAAAAAAAAAAECAAMRBBIxMnEhQWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABcRAQEBAQAAAAAAAAAAAAAAAAARIUH/2gAMAwEAAhEDEQA/AMXjcY3lwDhVd7bv5ENeH5GSc8hq7G6SfEfctsYN0Pvmgb1G1ciBK1sW1m3UrJGexH47E14T2OCEI6j/2Q==",
+        "alt": "A studio portrait in low warm light, subject turned three-quarters away"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
+      "order": 8
+    },
+    {
+      "_id": "w2",
+      "image": {
+        "src": "/photos/w2.jpg",
+        "width": 1800,
+        "height": 1200,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQFAv/EACUQAAICAgEACwAAAAAAAAAAAAECAxEABBIFISIxQVFhcaHB4f/EABUBAQEAAAAAAAAAAAAAAAAAAAMC/8QAGBEAAwEBAAAAAAAAAAAAAAAAAAERAiH/2gAMAwEAAhEDEQA/AK8k8urGQhvzbj8H2xCaJ9yVTyd3o9Qbv/MpiMSxmS6JBJ8cjzOwnSQGnU3dZEdoi0pDEupucqbWe/Rb+8MZ2eldiF1UcW7N2wwxagun/9k=",
+        "alt": "Two hands resting on a bouquet, wedding bands and a wristwatch in frame"
+      },
+      "categories": [
+        "weddings"
+      ],
+      "featured": false,
+      "order": 9
+    },
+    {
+      "_id": "n4",
+      "image": {
+        "src": "/photos/n4.jpg",
+        "width": 1800,
+        "height": 2700,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYBAv/EAB0QAAIBBAMAAAAAAAAAAAAAAAABAgMGERIhQYH/xAAVAQEBAAAAAAAAAAAAAAAAAAABAP/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwCsRjSJqN2QzzQa9OJXXJyelBa9ZZUJcZAAv//Z",
+        "alt": "Fog sitting on the tops of a conifer forest"
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 10
+    },
+    {
+      "_id": "e1",
+      "image": {
+        "src": "/photos/e1.jpg",
+        "width": 1800,
+        "height": 1200,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMEAf/EACIQAAIBBAICAwEAAAAAAAAAAAECAwAEERIFIRMxQWHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQACYf/aAAwDAQACEQMRAD8AdvBeu67+WaRcLGvr7NYsaHdYIxK69SKVDMBjGMdftTcZZ2t/eTqsCw6kZYEliT8++qmjKjk4oZDLLE2+VeViDjIFS9qJUHGw3nkkSXVQ+o2PZ6H9oqtuEtppHaJpYVBxqGyKKTRDhv/Z",
+        "alt": "A plated course at a long dinner, candles and glassware down the table"
+      },
+      "categories": [
+        "events"
+      ],
+      "featured": false,
+      "order": 11
+    },
+    {
+      "_id": "w4",
+      "image": {
+        "src": "/photos/w4.jpg",
+        "width": 1600,
+        "height": 2400,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQFAf/EACEQAAICAgICAwEAAAAAAAAAAAECAwQAERIhUWEFEzGx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQD/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARH/2gAMAwEAAhEDEQA/AIclSVARLGsehyBbokYylaWIcTXYj9BDE/zKNyosvxEtgbDqOY76PvNrSWVrR/UWc8RvZ9DDNi2Qk1+wKbwFwyEAdjvXjJzTSLoKxUDwdYYYGv/Z",
+        "alt": "Confetti falling as a couple kiss, guests crowded in close on both sides"
+      },
+      "categories": [
+        "weddings"
+      ],
+      "featured": false,
+      "order": 12
+    },
+    {
+      "_id": "n1",
+      "image": {
+        "src": "/photos/n1.jpg",
+        "width": 1600,
+        "height": 1066,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQAC/8QAIxAAAgICAQIHAAAAAAAAAAAAAQIAAxESIQQFExQiQXGBof/EABYBAQEBAAAAAAAAAAAAAAAAAAMBAv/EABcRAQEBAQAAAAAAAAAAAAAAAAEAEQL/2gAMAwEAAhEDEQA/ADu0tUKCrnB8Fj95mb1R0XQ54yeIb0LHzCqCRtlT8GMW9KlFLKCWDD3h9GdVBSKU16r6xnHMphq0BI1/ZRMs5f/Z",
+        "alt": "Late sun coming through a stand of tall pines"
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 13
+    },
+    {
+      "_id": "e2",
+      "image": {
+        "src": "/photos/e2.jpg",
+        "width": 1800,
+        "height": 1200,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQAD/8QAIBABAAIDAAAHAAAAAAAAAAAAAQIRAAMEBSExM1FSYf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAEh/9oADAMBAAIRAxEAPwDLTzySRKRGJKqX0x3w3oNUCKjbhvLqjKStqjd/pmuvV7hJuJXl85NhlOPbr+xlgGrQT1xVprLDTj//2Q==",
+        "alt": "Guests blowing bubbles around a couple in low winter sun"
+      },
+      "categories": [
+        "events"
+      ],
+      "featured": false,
+      "order": 14
+    },
+    {
+      "_id": "w5",
+      "image": {
+        "src": "/photos/w5.jpg",
+        "width": 1600,
+        "height": 2400,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAQFAwb/xAAiEAACAQQBBAMAAAAAAAAAAAABAgADBBEhMQUiQdESUWH/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhEDEQA/AOcSrhy+Mk/ks9H6xRtqLpcPjeV7fUnpZNSsHuaiaVgPvtI9xR7dgR8jgkQlFhylWdbO4pcqyjnxvxMCxPO4QgX/2Q==",
+        "alt": "A couple walking beneath a palm at dusk, still laughing at something"
+      },
+      "categories": [
+        "weddings"
+      ],
+      "featured": false,
+      "order": 15
+    },
+    {
+      "_id": "p2",
+      "image": {
+        "src": "/photos/p2.jpg",
+        "width": 2000,
+        "height": 1192,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAMABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAABQADBP/EACEQAAEEAAcBAQAAAAAAAAAAAAEAAgMRBAUSITJRcSIj/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAbEQACAQUAAAAAAAAAAAAAAAAAARECEhMxQf/aAAwDAQACEQMRAD8A5YMxhaP2hFjo0kIswwOptsc3uwDsiXRR1wb7Swj+pCw8WjZRku2CpXBOabBSSudqYPQFIyRg1KRKKk//2Q==",
+        "alt": "A ridge line at sunset with low cloud sitting in the valley"
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": false,
+      "order": 16
+    },
+    {
+      "_id": "n2",
+      "image": {
+        "src": "/photos/n2.jpg",
+        "width": 1600,
+        "height": 1067,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAMBAgb/xAAhEAACAgIBBAMAAAAAAAAAAAABAgADERIhBBRBUTFhwf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABYRAQEBAAAAAAAAAAAAAAAAAAAREv/aAAwDAQACEQMRAD8Aza1Jq7FyQWwAPmXFhrqUV7AKTkt4MlsBRqNQW/Y7rLdhWQNccceRMwL7n2HY+84zCJsrSxyz7E/RhGUr/9k=",
+        "alt": "A boardwalk running into dense rainforest"
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 17
+    },
+    {
+      "_id": "e4",
+      "image": {
+        "src": "/photos/e4.jpg",
+        "width": 1600,
+        "height": 1067,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUCBP/EAB8QAAICAgIDAQAAAAAAAAAAAAECAAMEERIhMVFhgf/EABUBAQEAAAAAAAAAAAAAAAAAAAEE/8QAGREAAwADAAAAAAAAAAAAAAAAAAIRAQMS/9oADAMBAAIRAxEAPwC5XkWsAAez4CqJprrV7LHj7IHn1I9N7tjlgdExZfYFBLb63+yPGxoFO6zNZXINVTfdRIduQ/PuI9uFP//Z",
+        "alt": "Two ceremony chairs on cut grass, name cards tied to the backs"
+      },
+      "categories": [
+        "events"
+      ],
+      "featured": false,
+      "order": 18
+    }
+  ],
+  "categories": [
+    {
+      "_id": "weddings",
+      "title": "Weddings",
+      "slug": "weddings",
+      "order": 0
+    },
+    {
+      "_id": "portraits",
+      "title": "Portraits",
+      "slug": "portraits",
+      "order": 1
+    },
+    {
+      "_id": "events",
+      "title": "Events",
+      "slug": "events",
+      "order": 2
+    },
+    {
+      "_id": "nature",
+      "title": "Nature",
+      "slug": "nature",
+      "order": 3
+    }
+  ],
+  "sessionTypes": [
+    {
+      "_id": "weddings",
+      "title": "Weddings",
+      "description": "Full-day coverage, two shooters, and an online gallery within three weeks.",
+      "startingPrice": 2800,
+      "order": 0
+    },
+    {
+      "_id": "portraits",
+      "title": "Portraits",
+      "description": "Seniors, families, headshots. About ninety minutes, one location.",
+      "startingPrice": 350,
+      "order": 1
+    },
+    {
+      "_id": "events",
+      "title": "Events",
+      "description": "Showers, reunions, milestone parties. Priced by the hour.",
+      "startingPrice": 200,
+      "order": 2
+    }
+  ],
+  "home": {
+    "hero": {
+      "src": "/photos/hero.jpg",
+      "width": 2400,
+      "height": 1600,
+      "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAUGA//EAB0QAAICAgMBAAAAAAAAAAAAAAECAAMEEQUSIVH/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAL/xAAXEQEBAQEAAAAAAAAAAAAAAAABABIR/9oADAMBAAIRAxEAPwCex7lWwMVB19lNj8xWlC9tAEHXyRuyIz42oWr2f0AkEH3fkykjy2y89bb2ZVGjCKHJ7GEsk6b/2Q==",
+      "alt": "A couple walking a gravel path at golden hour, backs to the camera"
+    },
+    "headlineBefore": "The parts you",
+    "headlineScript": "remember",
+    "headlineAfter": "",
+    "intro": "I photograph weddings, portraits, and the ordinary afternoons in between — mostly outdoors, mostly in whatever light the day gives us.",
+    "closingHeading": "Dates open through fall",
+    "closingBody": "Tell me when and where, and I will tell you within a day whether I am free."
+  },
+  "about": {
+    "portrait": {
+      "src": "/photos/portrait.jpg",
+      "width": 1400,
+      "height": 2098,
+      "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMEBf/EACMQAAICAQMDBQAAAAAAAAAAAAECAxEABAUSIjFRISNhccH/xAAVAQEBAAAAAAAAAAAAAAAAAAACAf/EABcRAQEBAQAAAAAAAAAAAAAAAAARASH/2gAMAwEAAhEDEQA/AHS7nFPBy21BSmneSMmvAA/cjO9be6IZonEldXFbF/GZ2nVoNO8cb8mZSDQ7HzkMY5AiuoGjffD1dkOjc8T95PK/usxVSW9TeGGMH//Z",
+      "alt": "Hattie, outdoors with a camera in her lap, looking at the frame"
+    },
+    "heading": "About Hattie",
+    "body": [
+      "TODO: Hattie to replace — I have been photographing people for about eight years, which started the way most of these things start: a hand-me-down camera and a friend who needed headshots and could not pay me.",
+      "TODO: Hattie to replace — I shoot mostly outdoors and mostly late in the day, because that is when people stop performing. If you are worried you are not photogenic, you are in good company. Almost nobody likes being photographed for the first ten minutes. That is what the first ten minutes are for.",
+      "TODO: Hattie to replace — Practically: I answer emails within a day, I send galleries within three weeks, and I will tell you if I think another photographer is a better fit for what you want. I would rather do that than take the booking."
+    ],
+    "pullQuote": "Nobody likes the first ten minutes"
+  },
+  "booking": {
+    "heading": "Booking",
+    "intro": [
+      "Pick a time below and we will talk for twenty minutes — what you want, where, roughly when, and whether I am the right person for it. No deposit at this stage.",
+      "If nothing on the calendar works, email me and we will find something. Weekends book out first, usually three to four months ahead."
+    ],
+    "fallbackNote": "Calendar not loading?"
+  },
+  "contact": {
+    "heading": "Contact",
+    "intro": "The more you can tell me here, the more useful my first reply is — I would rather quote you properly than send you a rate card.",
+    "autoResponseSubject": "Thanks — I have your message",
+    "autoResponseBody": "Thanks for getting in touch. I have your message and I answer everything within one working day, usually sooner. If it has been longer than that, something has gone wrong on my end — please reply to this email and nudge me.\n\n— Hattie"
+  },
+  "settings": {
+    "availability": {
+      "enabled": true,
+      "text": "Booking fall 2026 — 3 dates left"
+    },
+    "schedulingUrl": "https://calendly.com/",
+    "business": {
+      "name": "Hattie's Highlights",
+      "city": "TODO_CITY",
+      "region": "TODO_STATE",
+      "serviceArea": "TODO_CITY and surrounding counties",
+      "phone": "",
+      "hours": "By appointment",
+      "email": "hello@hattieshighlights.com",
+      "social": [
+        {
+          "label": "Instagram",
+          "href": "https://instagram.com/"
+        },
+        {
+          "label": "Facebook",
+          "href": "https://facebook.com/"
+        }
+      ]
+    }
+  }
+}
