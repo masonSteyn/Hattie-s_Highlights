@@ -472,10 +472,12 @@ export function Editor({
   published,
   publishReady,
   publishReason,
+  publishEnv,
 }: {
   published: SiteContent;
   publishReady: boolean;
   publishReason: string | null;
+  publishEnv: { name: string; present: boolean; note?: string }[];
 }) {
   const [tab, setTab] = useState<Tab>("Photos");
   const { draft, update, discard, dirty, loaded } = useDraft(published);
@@ -531,9 +533,27 @@ export function Editor({
       </header>
 
       {!publishReady ? (
-        <p className="edBanner" role="alert">
-          <strong>Changes cannot be published yet.</strong> {publishReason}
-        </p>
+        <div className="edBanner" role="alert">
+          <p>
+            <strong>Changes cannot be published yet.</strong> {publishReason}
+          </p>
+          {/* What the server can actually see, so a missing variable and a
+              misspelled one stop looking the same. */}
+          <ul className="edEnvList">
+            {publishEnv.map((v) => (
+              <li key={v.name}>
+                <span aria-hidden="true">{v.present ? "✓" : "✗"}</span>{" "}
+                <code>{v.name}</code>{" "}
+                {v.present ? (v.note ?? "is set") : "is not visible to the server"}
+              </li>
+            ))}
+          </ul>
+          <p className="edNote">
+            Set these in Vercel under Settings → Environment Variables, tick
+            Production, then redeploy — variables do not reach a build that already
+            happened.
+          </p>
+        </div>
       ) : null}
 
       <nav className="edTabs" aria-label="Sections">

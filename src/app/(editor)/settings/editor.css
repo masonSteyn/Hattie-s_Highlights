@@ -528,3 +528,17 @@
 .edErrorList {
   margin-top: var(--s-4);
 }
+
+/* Configuration report inside the cannot-publish banner. */
+.edEnvList {
+  margin: var(--s-3) 0 var(--s-2);
+  font-size: 0.875rem;
+  line-height: 1.9;
+}
+
+.edEnvList code {
+  font-size: 0.8125rem;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  padding: 1px 5px;
+  border-radius: 2px;
+}

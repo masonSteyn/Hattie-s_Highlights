@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { authConfig } from "@/lib/auth";
 import { getSiteContent } from "@/lib/content";
-import { publishBlockedReason, publishConfigured } from "@/lib/github";
+import { publishBlockedReason, publishConfigured, publishEnvReport } from "@/lib/github";
 import { isSignedIn } from "@/lib/session";
 
 import { Editor } from "./Editor";
@@ -29,6 +29,7 @@ export default async function SettingsPage() {
       published={getSiteContent()}
       publishReady={publishConfigured()}
       publishReason={publishBlockedReason()}
+      publishEnv={publishEnvReport()}
     />
   );
 }

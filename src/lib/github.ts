@@ -158,6 +158,35 @@ export async function publishFiles(
   }
 }
 
+/**
+ * Which publishing variables the running server can actually see.
+ *
+ * Names and presence only — never values. A missing variable and a
+ * misspelled one look identical from the outside, and chasing that
+ * difference through a dashboard is miserable; this turns it into a glance.
+ * Only ever rendered to a signed-in editor.
+ */
+export function publishEnvReport(): { name: string; present: boolean; note?: string }[] {
+  const repo = process.env.GITHUB_REPO;
+  return [
+    {
+      name: "GITHUB_TOKEN",
+      present: Boolean(process.env.GITHUB_TOKEN),
+    },
+    {
+      name: "GITHUB_REPO",
+      present: Boolean(repo),
+      // Safe to echo: a repository path is public information.
+      note: repo ? `= ${repo}` : undefined,
+    },
+    {
+      name: "GITHUB_BRANCH",
+      present: true,
+      note: `= ${process.env.GITHUB_BRANCH || "main (default)"}`,
+    },
+  ];
+}
+
 /** Confirms the token works and can write, without changing anything. */
 export async function checkAccess(): Promise<{ ok: boolean; detail: string }> {
   const cfg = config();
