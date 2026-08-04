@@ -4,7 +4,10 @@ import { Instrument_Serif, Inter, Petit_Formal_Script } from "next/font/google";
 import { AvailabilityBanner } from "@/components/AvailabilityBanner";
 import { LogoBand } from "@/components/LogoBand";
 import { Sidebar } from "@/components/Sidebar";
-import { getSettings } from "@/lib/content";
+import { getHome, getSessionTypes, getSettings } from "@/lib/content";
+import { placeName, siteDescription } from "@/lib/metadata";
+import { siteUrl } from "@/lib/site-url";
+import { buildBusinessSchema, serializeJsonLd } from "@/lib/structured-data";
 
 import "../globals.css";
 import "../shell.css";
@@ -82,21 +85,47 @@ const script = Petit_Formal_Script({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Hattie's Highlights",
-    template: "%s · Hattie's Highlights",
-  },
-  description:
-    "Portrait, wedding, and event photography. Natural light, unhurried sessions.",
-};
+/**
+ * Site-wide defaults.
+ *
+ * Generated rather than static so the homepage title can name where Hattie
+ * works — "Photographer in <city>" is the single highest-value string on a
+ * local service site, and it is the reason `business.city` exists in the store.
+ * Until she fills that field in, the title falls back to the plain business
+ * name rather than inventing a location.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const { name } = settings.business;
+  const place = placeName(settings.business);
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: place ? `${name} — Photographer in ${place}` : name,
+      template: `%s · ${name}`,
+    },
+    description: siteDescription(place),
+  };
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSettings();
+  const [settings, sessionTypes, home] = await Promise.all([
+    getSettings(),
+    getSessionTypes(),
+    getHome(),
+  ]);
+
+  const businessSchema = buildBusinessSchema({
+    settings,
+    sessionTypes,
+    description: siteDescription(placeName(settings.business)),
+    heroSrc: home.hero.src,
+  });
 
   return (
     <html
@@ -118,6 +147,13 @@ export default async function RootLayout({
             {children}
           </main>
         </div>
+
+        {/* Last in the body so it cannot come between the skip link and the
+            content it skips to. Crawlers read JSON-LD wherever it sits. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(businessSchema) }}
+        />
       </body>
     </html>
   );

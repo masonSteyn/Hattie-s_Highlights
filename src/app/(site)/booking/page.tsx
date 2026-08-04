@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 
 import { getBooking, getSessionTypes, getSettings } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 import { resolveSchedulingEmbed } from "@/lib/scheduling";
 
 import "./booking.css";
 
-export const metadata: Metadata = {
-  title: "Booking",
-  description:
-    "Session types, starting prices, and a calendar — book a call with Hattie's Highlights.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Booking",
+    description:
+      "Session types, starting prices, and a calendar — book a call with Hattie's Highlights.",
+    path: "/booking",
+  });
+}
 
 const price = new Intl.NumberFormat("en-US", {
   style: "currency",

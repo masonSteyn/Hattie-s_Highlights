@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PortfolioView } from "@/components/PortfolioView";
-import { getCategories } from "@/lib/content";
+import { getCategories, getPhotos, getSettings } from "@/lib/content";
+import { pageMetadata, placeName } from "@/lib/metadata";
 
 import "../portfolio.css";
 
@@ -19,13 +20,28 @@ export async function generateMetadata(
   props: PageProps<"/portfolio/[category]">,
 ): Promise<Metadata> {
   const { category } = await props.params;
-  const match = (await getCategories()).find((c) => c.slug === category);
+  const [categories, settings] = await Promise.all([getCategories(), getSettings()]);
+  const match = categories.find((c) => c.slug === category);
   if (!match) return {};
 
-  return {
+  /* "Wedding photography in <city>" is the shape of the query these pages can
+     realistically win, so the location goes in here as well as on the home
+     page — but only once there is a location to name. */
+  const place = placeName(settings.business);
+  const subject = `${match.title} photography`;
+
+  /* Lead with the category's own work rather than the site hero, so each
+     category shares as a different picture. */
+  const [first] = await getPhotos(category);
+
+  return pageMetadata({
     title: match.title,
-    description: `${match.title} photography by Hattie's Highlights.`,
-  };
+    description: place
+      ? `${subject} in ${place} by ${settings.business.name}.`
+      : `${subject} by ${settings.business.name}.`,
+    path: `/portfolio/${category}`,
+    image: first?.image,
+  });
 }
 
 export default async function CategoryPage(

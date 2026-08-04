@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/ContactForm";
 import { getBudgetRanges, getContact, getSessionTypes, getSettings } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
 import "./contact.css";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Tell Hattie about your session — date, location, and what you are after.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Contact",
+    description:
+      "Tell Hattie about your session — date, location, and what you are after.",
+    path: "/contact",
+  });
+}
 
 export default async function ContactPage() {
   const [copy, sessionTypes, budgetRanges, settings] = await Promise.all([

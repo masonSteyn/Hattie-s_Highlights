@@ -3,14 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getAbout } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
 import "./about.css";
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Hattie photographs weddings, portraits, and events — mostly outdoors, mostly late in the day.",
-};
+/* Her portrait is the right social card for this page, not the hero. */
+export async function generateMetadata(): Promise<Metadata> {
+  const about = await getAbout();
+
+  return pageMetadata({
+    title: "About",
+    description:
+      "Hattie photographs weddings, portraits, and events — mostly outdoors, mostly late in the day.",
+    path: "/about",
+    image: about.portrait,
+  });
+}
 
 export default async function AboutPage() {
   const about = await getAbout();

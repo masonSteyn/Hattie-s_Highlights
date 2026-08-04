@@ -3,8 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getFeaturedPhotos, getHome } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
 import "./home.css";
+
+/* No `title` — the home page is the one page that should carry the layout's
+   default title rather than a templated "Home · …". */
+export function generateMetadata() {
+  return pageMetadata({ path: "/" });
+}
 
 /**
  * Home. Full-bleed hero, one intro line, a starred-work grid, one closing CTA.
