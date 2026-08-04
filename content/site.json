@@ -57,7 +57,7 @@
       "categories": [
         "nature"
       ],
-      "featured": true,
+      "featured": false,
       "order": 3
     },
     {
@@ -74,6 +74,36 @@
       ],
       "featured": true,
       "order": 4
+    },
+    {
+      "_id": "/photos/img-0873-msf4n0517gg.jpg",
+      "image": {
+        "src": "/photos/img-0873-msf4n0517gg.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAAF/8QAIRAAAQQCAQUBAAAAAAAAAAAAAQACAxEEElEUISIyQYH/xAAWAQEBAQAAAAAAAAAAAAAAAAABAgP/xAAYEQEBAAMAAAAAAAAAAAAAAAABABESIf/aAAwDAQACEQMRAD8AEGxZGQI8bFD6NbbE2OU3JwYI3gODdzQprSLpGgm6aCOSNgBeDf4ky+ckOxJ7/VigFJ2No0+r2MHAaVLZihiYzQRimHUWpOk4v//Z",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": true,
+      "order": 5
+    },
+    {
+      "_id": "/photos/img-0187-msf4nfhpov8.jpg",
+      "image": {
+        "src": "/photos/img-0187-msf4nfhpov8.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMEBv/EACMQAAEDAgUFAAAAAAAAAAAAAAEAAgMEERIhIkFRFFJxgrH/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAP/xAAXEQEBAQEAAAAAAAAAAAAAAAAAEQES/9oADAMBAAIRAxEAPwDORTtbnfymNmDosQte+Q5SxWOwlpZGQT2hPnqIiYyaZhB2OXxZwRIZNTtW/KFaxlM9oPTNHshHWJ//2Q==",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 6
     }
   ],
   "categories": [
