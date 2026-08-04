@@ -9,6 +9,8 @@ No CMS, no object storage, no monthly bill. The editor publishes by committing
 to this repository, which makes Vercel rebuild.
 
 For the client-facing guide, see **[HATTIE-GUIDE.md](./HATTIE-GUIDE.md)**.
+Picking this up cold? Start with **[HANDOFF.md](./HANDOFF.md)** — it covers the
+architecture, what is done, what is not, and the traps that cost real time.
 
 ---
 
