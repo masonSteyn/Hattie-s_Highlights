@@ -1,21 +1,6 @@
 {
   "photos": [
     {
-      "_id": "/photos/img-0880-msf3xvpqb0l.jpg",
-      "image": {
-        "src": "/photos/img-0880-msf3xvpqb0l.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAwAEBf/EACMQAAIBBAEDBQAAAAAAAAAAAAECEQADBCESBSJhMUFRgaH/xAAWAQEBAQAAAAAAAAAAAAAAAAACAQT/xAAZEQADAAMAAAAAAAAAAAAAAAAAARECITH/2gAMAwEAAhEDEQA/AB4WAXtqQHTYPyKO6zhEgoZ0Ap9qDqTti5hFsgdkTG6bHsjIZLbMymJBEa+qzxpdDNmY3slTCOrDwTrxVXQuYwVuPNjA9YG/yqgskWn/2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "weddings"
-      ],
-      "featured": true,
-      "order": 0
-    },
-    {
       "_id": "/photos/img-0843-msf3zsokktp.jpg",
       "image": {
         "src": "/photos/img-0843-msf3zsokktp.jpg",
@@ -28,7 +13,7 @@
         "nature"
       ],
       "featured": true,
-      "order": 1
+      "order": 0
     },
     {
       "_id": "/photos/img-0643-msf443hqyo9.jpg",
@@ -42,8 +27,8 @@
       "categories": [
         "nature"
       ],
-      "featured": true,
-      "order": 2
+      "featured": false,
+      "order": 1
     },
     {
       "_id": "/photos/img-1110-msf4c4u0qu9.jpg",
@@ -58,7 +43,7 @@
         "nature"
       ],
       "featured": true,
-      "order": 3
+      "order": 2
     },
     {
       "_id": "/photos/img-0739-msf4cvkvpf9.jpg",
@@ -72,7 +57,22 @@
       "categories": [
         "nature"
       ],
-      "featured": false,
+      "featured": true,
+      "order": 3
+    },
+    {
+      "_id": "/photos/img-0084-msf4m9xsehh.jpg",
+      "image": {
+        "src": "/photos/img-0084-msf4m9xsehh.jpg",
+        "width": 1920,
+        "height": 1280,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQGA//EAB8QAAICAgMAAwAAAAAAAAAAAAECAxEAEgQhMSJxkf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AEZBHEpMTuorwGx+HMHgTkQJI41ciuiBf2MC96WLBqxlLBBBFxyqQJoeypF4lEg3DkU0uhFek1hjUh+baigCQB71eGSD/9k=",
+        "alt": ""
+      },
+      "categories": [
+        "portraits"
+      ],
+      "featured": true,
       "order": 4
     }
   ],
