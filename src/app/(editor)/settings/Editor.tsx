@@ -9,8 +9,18 @@ import { publish, signOut, stagePhoto, type Result } from "./actions";
 
 const idle: Result = { ok: true };
 
-/** Where an unpublished draft is kept between page loads. */
-const DRAFT_KEY = "hh.draft.v1";
+/**
+ * Where an unpublished draft is kept between page loads.
+ *
+ * Versioned. A draft written by an older build can have a different shape, and
+ * restoring one blindly used to throw during render — which bricked the editor
+ * permanently, because the bad draft was reloaded on every visit and there was
+ * no way to clear it from the UI. Bumping this key retires old drafts outright;
+ * `isDraft` below is the second line of defence for anything else.
+ */
+const DRAFT_KEY = "hh.draft.v2";
+/** Retired keys, cleared on load so they cannot accumulate. */
+const OLD_DRAFT_KEYS = ["hh.draft.v1"];
 
 /** A photo already uploaded to GitHub, waiting to be committed. */
 type BlobRef = { path: string; sha: string };
@@ -25,6 +35,29 @@ type Draft = { content: SiteContent; blobs: BlobRef[] };
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
+}
+
+/**
+ * Is this actually a draft this build understands?
+ *
+ * Anything stored in a browser is untrusted input: it can be from an older
+ * version, hand-edited, or truncated by a full disk. The editor must degrade to
+ * "start from what is published" rather than to a blank error page.
+ */
+function isDraft(value: unknown): value is Draft {
+  if (!value || typeof value !== "object") return false;
+  const d = value as Partial<Draft>;
+  if (!Array.isArray(d.blobs)) return false;
+  if (!d.content || typeof d.content !== "object") return false;
+
+  const c = d.content as Partial<SiteContent>;
+  return (
+    Array.isArray(c.photos) &&
+    Array.isArray(c.categories) &&
+    Boolean(c.home) &&
+    Boolean(c.about) &&
+    Boolean(c.settings)
+  );
 }
 
 /**
@@ -48,11 +81,29 @@ function useDraft(published: SiteContent) {
   // on mount is the documented exception to the set-state-in-effect rule.
   useEffect(() => {
     try {
+      for (const key of OLD_DRAFT_KEYS) window.localStorage.removeItem(key);
+
       const saved = window.localStorage.getItem(DRAFT_KEY);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, an external store unavailable during SSR
-      if (saved) setDraft(JSON.parse(saved) as Draft);
+      if (saved) {
+        const parsed: unknown = JSON.parse(saved);
+        if (isDraft(parsed)) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, an external store unavailable during SSR
+          setDraft(parsed);
+        } else {
+          // Unrecognisable: drop it rather than render from it. Losing an
+          // unpublished draft is bad; an editor that cannot open at all is
+          // worse, and the published site is never at risk either way.
+          window.localStorage.removeItem(DRAFT_KEY);
+          console.warn("[editor] Discarded a draft this version does not understand.");
+        }
+      }
     } catch {
       /* Corrupt or full storage: fall back to the published content. */
+      try {
+        window.localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* Nothing more to do — the published content still renders. */
+      }
     }
     setLoaded(true);
   }, []);

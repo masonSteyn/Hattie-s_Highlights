@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hattie's Highlights">
+  <!--
+    A reduction of the logo, not a copy of it.
+
+    The full mark is a fine line-art camera wreathed in florals with a script
+    wordmark above and below. At 16px — which is the size that actually matters
+    for a favicon — all of that turns to grey mush: the strokes are thinner than
+    a destination pixel, and the two lines of script are unreadable well before
+    that. So this keeps the one thing that survives and still says "photographer":
+    the camera, drawn at a weight that holds up small.
+
+    Cream is painted edge to edge rather than left transparent, so the mark reads
+    against a dark browser chrome as well as a light one.
+  -->
+  <rect width="64" height="64" fill="#FFF7E6"/>
+  <g fill="none" stroke="#2B2724" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Body, with the viewfinder shoulder on the left and the raised hump. -->
+    <path d="M8 24h6l3.5-6h13.5l3.5 6H56v24H8z"/>
+    <!-- Lens. -->
+    <circle cx="32" cy="36" r="9"/>
+  </g>
+  <!-- A single leaf, the only floral detail heavy enough to survive the
+       downscale. It keeps the tie to the wordmark without adding noise. -->
+  <path d="M46 20c5-6 11-6 11-6s0 6-5 8-6-2-6-2z" fill="#2B2724"/>
+</svg>
