@@ -385,19 +385,19 @@
       "enabled": true,
       "text": "Booking fall 2026 — 3 dates left"
     },
-    "schedulingUrl": "https://calendly.com/",
+    "schedulingUrl": "https://calendly.com/hattie/consult",
     "business": {
-      "name": "not-an-email",
+      "name": "Hattie's Highlights",
       "city": "TODO_CITY",
       "region": "TODO_STATE",
       "serviceArea": "TODO_CITY and surrounding counties",
       "phone": "",
       "hours": "By appointment",
-      "email": "hello@hattieshighlights.com",
+      "email": "hattie@example.com",
       "social": [
         {
           "label": "Instagram",
-          "href": "https://instagram.com/"
+          "href": "https://instagram.com/hattie"
         },
         {
           "label": "Facebook",
