@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Portfolio + lightbox
+   ========================================================================== */
+
+/* --- Category filter ------------------------------------------------------
+   Real links to statically generated routes, not client-side state. Each
+   category is its own URL, so a filtered view can be shared and indexed, and
+   Next prefetches them on hover — switching is instant without shipping a
+   filtering runtime. */
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-6);
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule-sage-faint);
+}
+
+.filterLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  /* "All" is only three characters wide, which left it a 20px-wide target.
+     The floor applies to every filter so the underline widths stay consistent
+     rather than one being padded and the rest not. */
+  min-width: 44px;
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-58);
+  transition: color var(--dur) var(--ease);
+}
+
+.filterLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  height: 1px;
+  background: var(--blush);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+.filterLink:hover {
+  color: var(--ink);
+}
+
+.filterLink:hover::after {
+  transform: scaleX(0.34);
+}
+
+.filterLink[aria-current="page"] {
+  color: var(--ink);
+}
+
+.filterLink[aria-current="page"]::after {
+  transform: scaleX(1);
+  height: 2px;
+}
+
+.count {
+  margin-top: var(--s-5);
+  font-size: 0.8125rem;
+  color: var(--ink-58);
+}
+
+/* --- Gallery -------------------------------------------------------------- */
+.gallery {
+  padding: var(--s-7) var(--gutter) var(--s-10);
+  columns: 3;
+  column-gap: clamp(var(--s-5), 2.4vw, var(--s-7));
+}
+
+.gallery .cell {
+  margin-bottom: clamp(var(--s-5), 2.4vw, var(--s-7));
+}
+
+.gallery .frame {
+  width: 100%;
+  cursor: zoom-in;
+}
+
+.empty {
+  padding: var(--s-8) var(--gutter) var(--s-10);
+  color: var(--ink-72);
+}
+
+@media (max-width: 1279px) {
+  .gallery {
+    columns: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery {
+    columns: 1;
+  }
+}
+
+/* ==========================================================================
+   Lightbox
+   The one place on the site that goes dark. A photograph shown at full size
+   needs a neutral surround, and cream at this scale casts a warm tint over
+   every image.
+   ========================================================================== */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  background: color-mix(in srgb, var(--ink) 96%, black);
+  padding: 0 var(--s-3) var(--s-5);
+}
+
+.lightboxBar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-2) var(--s-3) var(--s-4);
+}
+
+.lightboxCount {
+  color: color-mix(in srgb, var(--cream) 62%, transparent);
+}
+
+.lightboxBtn {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-control);
+  color: var(--cream);
+  transition: background-color var(--dur) var(--ease);
+}
+
+.lightboxBtn:hover {
+  background: color-mix(in srgb, var(--cream) 12%, transparent);
+}
+
+/* On a dark surround the sage ring loses contrast, so focus switches to blush
+   here — 8.4:1 against this background. */
+.lightbox :focus-visible {
+  outline-color: var(--blush);
+}
+
+.lightboxStage {
+  grid-row: 2;
+  display: grid;
+  place-items: center;
+  gap: var(--s-4);
+  min-height: 0;
+  height: 100%;
+  /* Touch panning is disabled so a horizontal drag reads as a swipe rather
+     than fighting the browser for the gesture. */
+  touch-action: pan-y;
+}
+
+.lightboxStage img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  /* Bounded on both axes so neither a tall portrait nor a wide panorama can
+     overflow the viewport. */
+  max-height: calc(100vh - 150px);
+  object-fit: contain;
+}
+
+.lightboxCaption {
+  font-size: 0.8125rem;
+  color: color-mix(in srgb, var(--cream) 72%, transparent);
+  text-align: center;
+  max-width: 60ch;
+}
+
+.lightboxPrev {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.lightboxNext {
+  grid-row: 2;
+  grid-column: 3;
+}
+
+.lightboxPreload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  /* Arrows come off the sides on a phone — they would sit on top of the
+     photograph. Swipe is the primary gesture here, and the counter tells you
+     there is more. */
+  .lightboxPrev,
+  .lightboxNext {
+    display: none;
+  }
+
+  .lightbox {
+    grid-template-columns: 1fr;
+  }
+
+  .lightboxStage {
+    grid-column: 1;
+  }
+
+  .lightboxStage img {
+    max-height: calc(100dvh - 130px);
+  }
+}

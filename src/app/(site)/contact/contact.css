@@ -1,0 +1,222 @@
+/* ==========================================================================
+   Contact
+   ========================================================================== */
+
+.contact {
+  padding-bottom: var(--s-10);
+}
+
+.contactIntro {
+  margin-top: var(--s-5);
+  max-width: 52ch;
+  color: var(--ink-72);
+}
+
+.contactBody {
+  padding: var(--s-7) var(--gutter) 0;
+}
+
+.form {
+  max-width: 42rem;
+}
+
+/* --- Fields ---------------------------------------------------------------
+   Underline inputs rather than boxes. Six boxed fields stacked up read as a
+   government form; a rule under each one keeps the page as quiet as the rest
+   of the site while still marking where you type. */
+.field {
+  margin-bottom: var(--s-6);
+}
+
+.label {
+  display: block;
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--ink-58);
+  margin-bottom: var(--s-2);
+}
+
+.hint {
+  font-size: 0.8125rem;
+  color: var(--ink-58);
+  margin-bottom: var(--s-2);
+  max-width: 46ch;
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-3) 0;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-bottom: 1px solid var(--rule-sage);
+  border-radius: 0;
+  font-size: 1rem;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.input:hover {
+  border-color: color-mix(in srgb, var(--sage) 70%, transparent);
+}
+
+/* Mist is the form-focus colour, per the palette roles. It is used as a rule
+   here, not as text, so it is not carrying any contrast burden — the visible
+   focus ring is still the sage-deep outline from globals.css. */
+.input:focus {
+  border-color: var(--mist);
+  border-bottom-width: 2px;
+  outline: none;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--sage-deep);
+  outline-offset: 4px;
+}
+
+.select {
+  appearance: none;
+  /* Room for the caret drawn below. */
+  padding-right: var(--s-6);
+  background-image: linear-gradient(
+      45deg,
+      transparent 50%,
+      currentColor 50%,
+      currentColor 58%,
+      transparent 58%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 50%,
+      currentColor 50%,
+      currentColor 58%,
+      transparent 58%
+    );
+  background-position:
+    right 10px center,
+    right 4px center;
+  background-size: 7px 7px;
+  background-repeat: no-repeat;
+  color: var(--ink);
+}
+
+.textarea {
+  min-height: 9rem;
+  padding-top: var(--s-2);
+  line-height: var(--leading-body);
+  resize: vertical;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--s-6);
+}
+
+/* --- Errors ---------------------------------------------------------------
+   Coral is the palette's emphasis colour, so it marks the rule. The message
+   itself is ink, because coral text on cream is about 1.5:1. */
+.field[data-invalid="true"] .input {
+  border-color: var(--coral);
+  border-bottom-width: 2px;
+}
+
+.fieldError {
+  margin-top: var(--s-2);
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+.fieldError::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--s-2);
+  background: var(--coral);
+  vertical-align: 0.1em;
+}
+
+/* --- Outcomes -------------------------------------------------------------
+   Never a silent success and never a silent failure: both states replace or
+   precede the form and take focus. */
+.outcome {
+  padding: var(--s-5) var(--s-6);
+  margin-bottom: var(--s-6);
+  max-width: 42rem;
+}
+
+.outcome:focus-visible {
+  outline: 2px solid var(--sage-deep);
+  outline-offset: 3px;
+}
+
+.outcomeError {
+  border-left: 3px solid var(--coral);
+  background: color-mix(in srgb, var(--coral) 12%, var(--cream));
+}
+
+.outcomeSuccess {
+  border-left: 3px solid var(--sage);
+  background: color-mix(in srgb, var(--sage) 14%, var(--cream));
+}
+
+.outcomeHeading {
+  font-size: var(--text-h3);
+  margin-bottom: var(--s-3);
+}
+
+.outcomeNote {
+  margin-top: var(--s-4);
+  font-size: 0.8125rem;
+  color: var(--ink-58);
+}
+
+/* --- Actions --------------------------------------------------------------- */
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4) var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule-sage-faint);
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.formNote {
+  font-size: 0.875rem;
+  color: var(--ink-58);
+}
+
+.fallbackLink {
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule-sage);
+  padding-bottom: 1px;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.fallbackLink:hover {
+  border-color: var(--ink);
+}
+
+/* Off-screen rather than display:none — some bots skip hidden fields, and this
+   one is only useful if it looks fillable to them. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 599px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}

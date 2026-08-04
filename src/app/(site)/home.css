@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Home
+   Section rhythm is deliberately uneven: hero → tight intro → wide gap → grid
+   → wide gap → closing. Uniform padding is what makes a page read as a
+   template, so there is no single section-spacing value here.
+   ========================================================================== */
+
+/* --- Hero -----------------------------------------------------------------
+   Full-bleed within the content column: edge to edge from the sidebar's right
+   border to the viewport edge. */
+.hero {
+  position: relative;
+  /* Tall enough to be a photograph rather than a banner, short enough that the
+     first section below it is visible on a laptop. */
+  height: clamp(420px, 74vh, 760px);
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The only gradient anywhere in the system, and it exists to make white text
+   legible over an unknown photograph — not for decoration. */
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--ink) 62%, transparent) 0%,
+    color-mix(in srgb, var(--ink) 30%, transparent) 42%,
+    transparent 72%
+  );
+}
+
+.heroContent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(var(--s-6), 6vh, var(--s-8));
+  padding-inline: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-5);
+}
+
+.heroHeadline {
+  color: var(--cream);
+  font-size: var(--text-h1);
+  max-width: 15ch;
+  /* A photograph can be anything underneath; this keeps the type readable
+     without resorting to a heavier scrim. */
+  text-shadow: 0 1px 24px color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+/* The global .script bump assumes the script is set inline at text sizes, where
+   it reads optically small. At display sizes the relationship inverts and the
+   accent word swamps the serif it is supposed to accent, so it comes back down
+   to sit at roughly matched cap height. */
+.heroHeadline .script {
+  font-size: 0.72em;
+  /* Petit Formal Script leans right; without this the terminal swash of the
+     last letter collides with whatever follows. */
+  padding-right: 0.1em;
+}
+
+/* --- Intro ----------------------------------------------------------------
+   Tight to the hero on purpose. The pairing reads as one unit. */
+.intro {
+  padding: var(--s-7) var(--gutter) 0;
+}
+
+.introText {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  max-width: 34ch;
+  color: var(--ink);
+}
+
+/* --- Teaser grid ----------------------------------------------------------
+   A lead photograph on its own, then the shared masonry (see ui.css) for the
+   rest. Native aspect ratios throughout — nothing is cropped to a square. */
+.work {
+  padding: var(--s-9) var(--gutter) 0;
+}
+
+.workHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-6);
+}
+
+/* Standalone link rather than one inside a sentence, so it carries the same
+   44px minimum as every other target. The rule stays tight to the text; the
+   padding above it is what makes the target. */
+.workLink {
+  display: inline-flex;
+  align-items: flex-end;
+  min-height: 44px;
+  padding-bottom: 2px;
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-72);
+  border-bottom: 1px solid var(--rule-sage);
+  transition:
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.workLink:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* The lead photograph gets the opening beat on its own. It is bounded on two
+   axes rather than one — width by the column, height by the viewport — so a
+   tall portrait and a wide landscape both land at a comparable optical size
+   without either being cropped. */
+.lead {
+  max-width: 72%;
+  margin-bottom: clamp(var(--s-8), 7vw, var(--s-10));
+}
+
+.lead img {
+  width: auto;
+  height: auto;
+  max-height: 74vh;
+}
+
+/* --- Closing --------------------------------------------------------------
+   Large gap above, so it lands as its own beat rather than as the tail of the
+   grid. Mist gives the section a subtle shift off cream without introducing a
+   third accent to the page. */
+/* Mist at 26% turned the whole block gray and knocked the warmth out of the
+   page — exactly the washed-out failure the palette invites. At 12% it reads as
+   a shift in temperature rather than a change of colour, and the sage hairline
+   does most of the work of marking the section. */
+.closing {
+  margin-top: var(--s-10);
+  padding: var(--s-9) var(--gutter);
+  background: color-mix(in srgb, var(--mist) 12%, var(--cream));
+  border-top: 1px solid var(--rule-sage);
+}
+
+.closingInner {
+  display: grid;
+  gap: var(--s-6);
+  max-width: 58ch;
+}
+
+.closingHeading {
+  font-size: var(--text-h2);
+}
+
+/* ==========================================================================
+   Mobile — single column, nothing scrolls sideways
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* One column, and the lead stops being a lead — at this width the whole page
+     is a single column, so holding it back to 72% would just read as a margin
+     error. Collapsing to one column also restores exact curation order, since
+     column flow no longer reorders anything. */
+  .masonry {
+    columns: 1;
+  }
+
+  .lead {
+    max-width: 100%;
+    margin-bottom: var(--s-7);
+  }
+
+  .lead img {
+    max-height: none;
+    width: 100%;
+  }
+
+  .cell {
+    margin-bottom: var(--s-7);
+  }
+
+  .work {
+    padding-top: var(--s-8);
+  }
+
+  .closing {
+    margin-top: var(--s-9);
+  }
+}

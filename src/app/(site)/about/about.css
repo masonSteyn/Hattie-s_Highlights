@@ -1,0 +1,90 @@
+/* ==========================================================================
+   About
+   ========================================================================== */
+
+.about {
+  padding: var(--s-8) var(--gutter) var(--s-10);
+}
+
+/* Asymmetric by intent: the portrait takes the smaller share of the width but
+   is the taller element, so the copy column runs beside it rather than being
+   balanced against it. A 50/50 split here reads as a template. */
+.aboutGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
+  gap: clamp(var(--s-6), 5vw, var(--s-9));
+  align-items: start;
+}
+
+.aboutPortrait img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+.aboutCopy {
+  /* Nudged down so the copy starts below the top of the portrait rather than
+     level with it — the two columns should not share a baseline. */
+  padding-top: var(--s-6);
+}
+
+.aboutTitle {
+  font-size: var(--text-h2);
+  margin: var(--s-4) 0 var(--s-6);
+}
+
+.aboutParagraph {
+  max-width: 56ch;
+  margin-bottom: var(--s-5);
+}
+
+.aboutParagraph:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Pull quote -----------------------------------------------------------
+   The one place per page the script face is allowed to run on. Centred,
+   because display type is the only thing on this site that ever is. */
+.pullQuote {
+  margin: clamp(var(--s-8), 8vw, var(--s-10)) auto;
+  text-align: center;
+}
+
+.pullQuoteText {
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 3.75rem);
+  color: var(--ink);
+  line-height: 1.25;
+  /* Measured in em, not ch: a ch here resolves against the inherited body font
+     rather than the script, which set the line length to a third of what it
+     looked like and broke six words across four lines. */
+  max-width: 9em;
+  margin-inline: auto;
+}
+
+/* --- Closing --------------------------------------------------------------
+   Tight pairing after a large gap: the opposite rhythm to the section above. */
+.aboutClose {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-5) var(--s-7);
+  padding-top: var(--s-7);
+  border-top: 1px solid var(--rule-sage-faint);
+}
+
+@media (max-width: 899px) {
+  .aboutGrid {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  .aboutCopy {
+    padding-top: 0;
+  }
+
+  /* On one column the portrait no longer needs to hold a column width, and a
+     full-bleed image at phone size is stronger than an inset one. */
+  .aboutPortrait {
+    margin-inline: calc(var(--gutter) * -1);
+  }
+}

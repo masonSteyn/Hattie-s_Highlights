@@ -6,12 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fixtures": "node scripts/build-fixtures.mjs",
+    "check:providers": "node scripts/check-providers.mjs",
+    "seed": "node scripts/seed-sanity.mjs",
+    "seed:dry": "node scripts/seed-sanity.mjs --dry-run",
+    "finish": "node --experimental-strip-types scripts/finish-setup.mjs"
   },
   "dependencies": {
+    "@sanity/client": "^7.26.0",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/orderable-document-list": "^2.0.18",
+    "@sanity/vision": "^6.8.0",
+    "lucide-react": "^1.28.0",
     "next": "16.2.12",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "next-sanity": "^13.2.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "sanity": "^6.8.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -20,5 +34,19 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3",
+    "adm-zip": "^0.6.0",
+    "js-yaml": "^5.2.3",
+    "smol-toml": "^1.7.1",
+    "uuid": "^14.0.1",
+    "undici": "^7.29.0"
+  },
+  "allowScripts": {
+    "sharp@0.35.3": true,
+    "unrs-resolver@1.12.2": true,
+    "esbuild@0.28.1": true
   }
 }

@@ -1,0 +1,8 @@
+/* Base for the editor surface. The site's own reset lives in globals.css; this
+   only adds what a tool needs and the public pages do not. */
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

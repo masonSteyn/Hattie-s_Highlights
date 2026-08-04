@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Shared UI primitives — buttons, photo frames, masonry.
+   Loaded from the root layout so every route has them; page stylesheets only
+   hold what is genuinely specific to that page.
+   ========================================================================== */
+
+/* --- Buttons --------------------------------------------------------------
+   Filled with the accent, ink text. Blush at 9.98:1 and coral at 7.89:1
+   against the ink both clear AA comfortably; ink-on-pastel is the only
+   combination in this palette that does. Pastel-on-cream text would sit near
+   1.4:1, which is why it never appears. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 48px;
+  padding: var(--s-3) var(--s-6);
+  border-radius: var(--radius-control);
+  background: var(--blush);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.btn:hover {
+  background: color-mix(in srgb, var(--blush) 76%, var(--ink));
+  color: var(--cream);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Coral is the rare one: booking CTAs, and nothing else. */
+.btnBooking {
+  background: var(--coral);
+}
+
+.btnBooking:hover {
+  background: color-mix(in srgb, var(--coral) 74%, var(--ink));
+}
+
+.btn svg {
+  transition: transform var(--dur) var(--ease);
+}
+
+.btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* --- Photo frames ---------------------------------------------------------
+   Square corners, no shadow, no border. The photograph is the object. */
+.frame {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--mist) 30%, var(--cream));
+}
+
+.frame img {
+  width: 100%;
+  height: auto;
+  transition: transform var(--dur-slow) var(--ease);
+}
+
+.frame:hover img {
+  transform: scale(1.018);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame:hover img {
+    transform: none;
+  }
+}
+
+.caption {
+  margin-top: var(--s-3);
+  font-size: 0.8125rem;
+  color: var(--ink-58);
+}
+
+/* --- Masonry --------------------------------------------------------------
+   Column flow is what keeps a mixed set of portrait and landscape frames
+   balanced: every image is the same width and free to be whatever height it
+   actually is, instead of being forced into a row whose height is set by its
+   tallest neighbour. */
+.masonry {
+  columns: 2;
+  column-gap: clamp(var(--s-6), 4vw, var(--s-9));
+}
+
+.cell {
+  break-inside: avoid;
+  margin-bottom: clamp(var(--s-6), 4vw, var(--s-9));
+}
+
+/* --- Page headers ---------------------------------------------------------
+   Shared by every route except Home, which opens on the hero instead. */
+.pageHead {
+  padding: var(--s-8) var(--gutter) 0;
+}
+
+.pageTitle {
+  font-size: var(--text-h2);
+  margin-top: var(--s-4);
+}

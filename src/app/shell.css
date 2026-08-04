@@ -1,0 +1,294 @@
+/* ==========================================================================
+   Shell — banner, logo band, sidebar, main column
+   See the wireframe comment in layout.tsx.
+   ========================================================================== */
+
+/* Height of the availability banner when it is showing: 13px text at 1.7,
+   plus var(--s-2) top and bottom, plus the hairline. */
+.shell[data-banner="true"] {
+  --above-sidebar: 39px;
+}
+
+/* --- Availability banner --------------------------------------------------
+   Sage at low opacity so it registers without competing with the mark. Ink
+   text, because sage-on-cream would not pass AA. */
+.banner {
+  background: color-mix(in srgb, var(--sage) 32%, var(--cream));
+  color: var(--ink);
+  text-align: center;
+  padding: var(--s-2) var(--s-4);
+  font-size: 0.8125rem;
+  letter-spacing: var(--tracking-wide);
+  border-bottom: 1px solid var(--rule-sage);
+}
+
+/* --- Logo band ------------------------------------------------------------
+   Desktop only. Below 1024px the sticky .mobileBar owns the mark. */
+.logoBand {
+  display: none;
+  place-items: center;
+  height: var(--logo-band-h);
+  border-bottom: 1px solid var(--rule-sage-faint);
+  background: var(--cream);
+}
+
+.logoBand a {
+  display: block;
+  padding: var(--s-2);
+}
+
+.logoBand img {
+  height: 104px;
+  width: auto;
+}
+
+/* --- Shell grid ----------------------------------------------------------- */
+.shell {
+  display: block;
+}
+
+.main {
+  min-width: 0;
+}
+
+/* --- Sidebar -------------------------------------------------------------- */
+.sidebar {
+  display: none;
+}
+
+/* Mobile top bar owns the logo below 1024px. */
+.mobileBar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  height: var(--logo-band-h-mobile);
+  background: var(--cream);
+  border-bottom: 1px solid var(--rule-sage-faint);
+}
+
+.mobileBar img {
+  height: 48px;
+  width: auto;
+}
+
+.hamburger {
+  position: absolute;
+  left: max(var(--s-2), env(safe-area-inset-left));
+  top: 50%;
+  transform: translateY(-50%);
+  /* 44px minimum tap target. */
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+
+/* --- Mobile drawer -------------------------------------------------------- */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: color-mix(in srgb, var(--ink) 38%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+
+.scrim[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 100;
+  width: min(88vw, 340px);
+  background: var(--cream);
+  border-right: 1px solid var(--rule-sage);
+  padding: var(--s-6) var(--s-6) var(--s-8);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform var(--dur-slow) var(--ease);
+  overflow-y: auto;
+}
+
+.drawer[data-open="true"] {
+  transform: translateX(0);
+}
+
+.drawerClose {
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--s-6);
+  color: var(--ink);
+}
+
+/* --- Nav (shared between sidebar and drawer) ------------------------------ */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.navLink {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  padding: var(--s-3) 0;
+  font-size: 0.9375rem;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-72);
+  transition: color var(--dur) var(--ease);
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--s-3) - 5px);
+  height: 1px;
+  background: var(--blush);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+.navLink:hover {
+  color: var(--ink);
+}
+
+/* Hover reveals the rule at half strength; active is the full rule. Neither is
+   a filled pill or a background block. */
+.navLink:hover::after {
+  transform: scaleX(0.34);
+}
+
+.navLink[aria-current="page"] {
+  color: var(--ink);
+}
+
+.navLink[aria-current="page"]::after {
+  transform: scaleX(1);
+  height: 2px;
+}
+
+/* Drawer nav is larger — it is the only thing on screen. */
+.drawer .navLink {
+  font-size: 1.25rem;
+  padding: var(--s-4) 0;
+  min-height: 44px;
+}
+
+/* --- Social --------------------------------------------------------------- */
+.social {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: auto;
+  padding-top: var(--s-6);
+}
+
+.socialLink {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-58);
+  transition: color var(--dur) var(--ease);
+}
+
+.socialLink:hover {
+  color: var(--sage-deep);
+}
+
+/* ==========================================================================
+   Desktop
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .mobileBar,
+  .scrim,
+  .drawer {
+    display: none;
+  }
+
+  .logoBand {
+    display: grid;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    /* Sits directly beneath the logo band. Subtracting the band height means
+       the social row lands inside the first viewport instead of 148px below
+       the fold; once the band has scrolled away the sidebar simply sits that
+       much clear of the bottom edge, which reads as margin. */
+    top: 0;
+    /* Everything above the sidebar has to come out of its height, or its last
+       item hangs below the fold and cannot be clicked. The banner is optional,
+       so the shell reports whether it is there. */
+    height: calc(100vh - var(--logo-band-h) - var(--above-sidebar, 0px));
+    padding: var(--s-8) var(--s-6) var(--s-6);
+    background: var(--cream);
+    overflow-y: auto;
+  }
+
+  /* The hairline lives on the content column, not the sidebar. The sidebar is
+     one viewport tall, so a border there stops partway down the page; main runs
+     the full document height and the rule runs with it. */
+  .main {
+    border-left: 1px solid var(--rule-sage-faint);
+  }
+
+  .social {
+    margin-left: calc(var(--s-3) * -1);
+  }
+}
+
+/* --- Admin entry point ----------------------------------------------------
+   Quiet, not hidden. Sits below the social row behind a hairline so it reads
+   as a site detail rather than as navigation. A plain <a> rather than a
+   <Link>: /studio is a separate root layout, and a full page load is both
+   correct and cheaper than pulling the editor into the client router. */
+.adminRow {
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule-sage-faint);
+}
+
+.adminLink {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: calc(var(--s-3) * -1);
+  color: var(--ink-38);
+  transition: color var(--dur) var(--ease);
+}
+
+.adminLink:hover {
+  color: var(--sage-deep);
+}
+
+.drawer .adminRow {
+  margin-top: var(--s-5);
+}
+
+.drawer .adminLink {
+  margin-left: 0;
+}

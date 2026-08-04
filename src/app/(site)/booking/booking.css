@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Booking
+   ========================================================================== */
+
+.booking {
+  padding-bottom: var(--s-10);
+}
+
+.bookingIntro {
+  padding: var(--s-6) var(--gutter) 0;
+}
+
+.bookingParagraph {
+  max-width: 58ch;
+  margin-bottom: var(--s-4);
+}
+
+/* --- Session types --------------------------------------------------------
+   A definition list, not three cards in a row with an icon on top. The
+   information is name / price / description, which is what a <dl> is for, and
+   the rules between rows carry the structure without any boxes. */
+.sessions {
+  padding: var(--s-8) var(--gutter) 0;
+}
+
+.sessionList {
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--rule-sage-faint);
+}
+
+.session {
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--rule-sage-faint);
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-4) clamp(var(--s-5), 4vw, var(--s-8));
+  align-items: baseline;
+}
+
+.sessionName {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-4);
+}
+
+.sessionTitle {
+  font-size: var(--text-h3);
+  line-height: 1.2;
+}
+
+.sessionPrice {
+  font-size: 0.8125rem;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-58);
+  white-space: nowrap;
+}
+
+.sessionDescription {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--ink-72);
+}
+
+/* --- Scheduler ------------------------------------------------------------
+   Sized by aspect ratio with a rem floor rather than a pixel height, so it
+   scales with the viewport and with the user's text size instead of clipping
+   the widget on a phone. */
+.scheduler {
+  padding: var(--s-9) var(--gutter) 0;
+}
+
+.schedulerFrame {
+  margin-top: var(--s-5);
+  /* width must be pinned: with only aspect-ratio and min-height set, the box
+     resolves its width *from* the floor height (44rem × 1.6 = 1126px) and
+     overflows the column. Pinning width makes min-height do what it reads
+     like — a floor on height, not a driver of width. */
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 44rem;
+  border: 1px solid var(--rule-sage-faint);
+  background: color-mix(in srgb, var(--mist) 12%, var(--cream));
+}
+
+.schedulerFrame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.schedulerMissing {
+  margin-top: var(--s-5);
+  padding: var(--s-6);
+  border: 1px solid var(--rule-sage);
+  color: var(--ink-72);
+  max-width: 58ch;
+}
+
+.fallback {
+  margin-top: var(--s-5);
+  color: var(--ink-72);
+  max-width: 58ch;
+  font-size: 0.9375rem;
+}
+
+.fallbackLink {
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule-sage);
+  padding-bottom: 1px;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.fallbackLink:hover {
+  border-color: var(--ink);
+}
+
+@media (max-width: 767px) {
+  .session {
+    grid-template-columns: 1fr;
+    gap: var(--s-2);
+  }
+
+  /* Taller and narrower on a phone: the widget's own layout goes single-column
+     here, so a 16/10 box would leave it scrolling inside a letterbox. */
+  .schedulerFrame {
+    aspect-ratio: 3 / 4;
+    min-height: 38rem;
+  }
+}
