@@ -37,10 +37,6 @@ const mb = (bytes: number) => {
   return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} MB`;
 };
 
-/** "3.5 MB" — for interface copy that has to name the limit out loud, so the
- *  number in the hint can never drift from the number being enforced. */
-export const MAX_UPLOAD_LABEL = mb(UPLOAD_LIMITS.maxBytes);
-
 /**
  * The one wording for "too big", shared by the browser check and the server
  * check so they cannot contradict each other.

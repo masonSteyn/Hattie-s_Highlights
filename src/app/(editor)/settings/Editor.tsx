@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useActionState, useCallback, useEffect, useMemo, useState } from "react";
 
 import type { SiteContent } from "@/lib/content";
-import { MAX_UPLOAD_LABEL, UPLOAD_LIMITS, tooLargeMessage } from "@/lib/upload-limits";
+import { needsReencode, reencode, type Prepared } from "@/lib/downscale";
+import { UPLOAD_LIMITS, tooLargeMessage } from "@/lib/upload-limits";
 
 import { publish, signOut, stagePhoto, type Result } from "./actions";
 
@@ -174,11 +175,25 @@ function Section({ title, intro, children }: { title: string; intro?: string; ch
  * here, above whichever panel is showing, is what stops that recurring the next
  * time something gains an image field.
  */
-function UploadStatus({ errors, uploading }: { errors: string[]; uploading: number }) {
-  if (uploading === 0 && errors.length === 0) return null;
+function UploadStatus({
+  errors,
+  uploading,
+  preparing,
+}: {
+  errors: string[];
+  uploading: number;
+  preparing: number;
+}) {
+  if (uploading === 0 && preparing === 0 && errors.length === 0) return null;
 
   return (
     <div className="edUploadStatus">
+      {preparing > 0 ? (
+        <p className="edUploading" role="status">
+          Resizing {preparing} photo{preparing === 1 ? "" : "s"}…
+        </p>
+      ) : null}
+
       {uploading > 0 ? (
         <p className="edUploading" role="status">
           Uploading {uploading} photo{uploading === 1 ? "" : "s"}…
@@ -264,7 +279,7 @@ function ImageSwap({
       </div>
 
       <div className="edSwapFields">
-        <Field label={label} hint={`JPEG, PNG, or WebP, up to ${MAX_UPLOAD_LABEL}.`}>
+        <Field label={label} hint="JPEG, PNG, or WebP. Large photos are resized for you.">
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -428,7 +443,7 @@ function PhotosPanel({
       <div className="edForm edUpload">
         <Field
           label="Add photos"
-          hint={`JPEG, PNG, or WebP, up to ${MAX_UPLOAD_LABEL} each — a file straight off the camera is often larger than that and will need exporting smaller first. Where the photo was taken is removed automatically.`}
+          hint="Drag them straight off the camera — anything too large is resized for you. Where the photo was taken is removed automatically."
         >
           <input
             type="file"
@@ -671,6 +686,9 @@ export function Editor({
   const { draft, update, discard, dirty, loaded } = useDraft(published);
   const [errors, setErrors] = useState<string[]>([]);
   const [uploading, setUploading] = useState(0);
+  // Resizing is separate from uploading because it is the slow part for a big
+  // photo, and "Uploading…" sitting still for four seconds looks like a hang.
+  const [preparing, setPreparing] = useState(0);
   const [state, formAction, pending] = useActionState(publish, idle);
 
   // Once a publish succeeds the draft is the published state, so clear it.
@@ -691,21 +709,49 @@ export function Editor({
    */
   const stage = useCallback(
     async (file: File, assign: (d: Draft, staged: StagedInfo) => void) => {
-      /* Check the size here, before the network.
-         Over the transport limit the request is rejected by the framework
-         before any of our code runs, so the server cannot explain what went
-         wrong — all it can produce is "the upload did not complete", which
-         reads like a connection problem and sends you off retrying a file that
-         will never work. Failing here is instant and says what to do. */
-      if (file.size > UPLOAD_LIMITS.maxBytes) {
-        setErrors((e) => [...e, `${file.name}: ${tooLargeMessage(file.size)}`]);
+      /* Shrink before sending, if it needs shrinking.
+         A camera original is far over the limit the request body can carry, and
+         that limit is the platform's rather than ours — so the choice is
+         re-encode it here or refuse it. Anything already small enough, and not
+         carrying a rotation that has to be baked in, is passed through
+         untouched and keeps its original bytes. */
+      let prepared: Prepared = { kind: "unchanged", file };
+      try {
+        // Asked first, so the notice below appears only for photos actually
+        // being re-encoded rather than flashing on every upload.
+        if (await needsReencode(file)) {
+          setPreparing((n) => n + 1);
+          try {
+            prepared = await reencode(file);
+          } finally {
+            setPreparing((n) => n - 1);
+          }
+        }
+      } catch {
+        prepared = { kind: "failed", reason: "that photo could not be read." };
+      }
+
+      if (prepared.kind === "failed") {
+        setErrors((e) => [...e, `${file.name}: ${prepared.reason}`]);
+        return;
+      }
+
+      /* Still too big even shrunk — a huge transparent PNG can land here.
+         Checked before the network because over the transport limit the request
+         is rejected by the framework before any of our code runs, so the server
+         cannot explain what went wrong: all it can produce is "the upload did
+         not complete", which reads like a connection problem and sends you off
+         retrying a file that will never work. */
+      const upload = prepared.file;
+      if (upload.size > UPLOAD_LIMITS.maxBytes) {
+        setErrors((e) => [...e, `${file.name}: ${tooLargeMessage(upload.size)}`]);
         return;
       }
 
       setUploading((n) => n + 1);
       try {
         const body = new FormData();
-        body.append("photo", file);
+        body.append("photo", upload);
         const result = await stagePhoto(body);
 
         if (!result.ok) {
@@ -785,7 +831,7 @@ export function Editor({
 
       <main className="edMain">
         {/* Above the panels, so an upload that fails on any tab says so. */}
-        <UploadStatus errors={errors} uploading={uploading} />
+        <UploadStatus errors={errors} uploading={uploading} preparing={preparing} />
 
         {tab === "Photos" && (
           <PhotosPanel draft={draft} update={update} stage={stage} />
