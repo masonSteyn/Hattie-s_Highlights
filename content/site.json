@@ -12,7 +12,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": true,
+      "featured": false,
       "order": 0
     },
     {
@@ -132,7 +132,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": false,
+      "featured": true,
       "order": 8
     },
     {
