@@ -14,6 +14,7 @@ import {
   type GitFile,
 } from "@/lib/github";
 import { prepareUpload } from "@/lib/image-metadata";
+import { resolveSchedulingEmbed } from "@/lib/scheduling";
 import { verifyPassword } from "@/lib/password";
 import { rateLimit } from "@/lib/rate-limit";
 import { endSession, isSignedIn, startSession } from "@/lib/session";
@@ -168,6 +169,32 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
     }
     if (!/^[0-9a-f]{40}$/.test(blob.sha)) {
       return NO("One of those photos did not upload cleanly. Please reload and try again.");
+    }
+  }
+
+  /* Business details have consequences beyond the page they appear on, so they
+     are checked here rather than trusted from the browser. Each failure names
+     the field and says what is wrong with it — these are rare edits made by
+     someone who will not try twice. */
+
+  const business = draft.content.settings.business;
+
+  // Every contact-form enquiry is sent here. A typo means they vanish.
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(business.email.trim())) {
+    return NO(`"${business.email}" does not look like an email address. Enquiries would not reach you.`);
+  }
+
+  // The scheduling URL ends up as an iframe source, so it is held to the same
+  // allowlist the Booking page checks before rendering it.
+  const scheduling = resolveSchedulingEmbed(draft.content.settings.schedulingUrl);
+  if (!scheduling.ok) {
+    return NO(`Booking calendar link: ${scheduling.reason}`);
+  }
+
+  for (const link of business.social) {
+    const href = link.href.trim();
+    if (href && !/^https:\/\//.test(href)) {
+      return NO(`The ${link.label} link needs to start with https://`);
     }
   }
 

@@ -449,9 +449,129 @@ function PhotosPanel({
   );
 }
 
+/* ── Your details ────────────────────────────────────────────────────────── */
+
+/**
+ * The set-once tier.
+ *
+ * These change once a year, not once a week, so they sit behind their own tab
+ * rather than competing with the photo list. Everything here is Hattie's own
+ * information — where she works, how to reach her — which is exactly the sort
+ * of thing that should not require asking a developer.
+ */
+function DetailsPanel({ draft, update }: { draft: Draft; update: (fn: (d: Draft) => void) => void }) {
+  const b = draft.content.settings.business;
+  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    update((d) => {
+      (d.content.settings.business as unknown as Record<string, string>)[key] = e.target.value;
+    });
+
+  return (
+    <Section
+      title="Your details"
+      intro="Where you work and how people reach you. You will rarely need to touch this — but it is yours to change."
+    >
+      <div className="edForm">
+        <Field label="Business name">
+          <input className="edInput" value={b.name} onChange={set("name")} maxLength={80} />
+        </Field>
+
+        <div className="edRow">
+          <div>
+            <Field label="City">
+              <input
+                className="edInput"
+                value={b.city}
+                onChange={set("city")}
+                maxLength={60}
+                placeholder="Boulder"
+              />
+            </Field>
+          </div>
+          <div>
+            <Field label="State or region">
+              <input
+                className="edInput"
+                value={b.region}
+                onChange={set("region")}
+                maxLength={60}
+                placeholder="Colorado"
+              />
+            </Field>
+          </div>
+        </div>
+
+        <Field
+          label="Areas you travel to"
+          hint="How you would describe it out loud — “Boulder and the Front Range”."
+        >
+          <input className="edInput" value={b.serviceArea} onChange={set("serviceArea")} maxLength={120} />
+        </Field>
+
+        <Field
+          label="Where enquiries go"
+          hint="Every message from the contact form is sent to this address. Make sure it is one you read."
+        >
+          <input
+            className="edInput"
+            type="email"
+            value={b.email}
+            onChange={set("email")}
+            maxLength={200}
+          />
+        </Field>
+
+        <div className="edRow">
+          <div>
+            <Field label="Phone (optional)">
+              <input className="edInput" value={b.phone} onChange={set("phone")} maxLength={40} />
+            </Field>
+          </div>
+          <div>
+            <Field label="Hours">
+              <input className="edInput" value={b.hours} onChange={set("hours")} maxLength={60} />
+            </Field>
+          </div>
+        </div>
+      </div>
+
+      <div className="edForm">
+        <Field
+          label="Booking calendar link"
+          hint="Paste the link to your Calendly (or Cal.com, SavvyCal, Acuity) booking page. This is what fills the Booking page."
+        >
+          <input
+            className="edInput"
+            value={draft.content.settings.schedulingUrl}
+            onChange={(e) => update((d) => { d.content.settings.schedulingUrl = e.target.value; })}
+            maxLength={300}
+            placeholder="https://calendly.com/your-name/consult"
+          />
+        </Field>
+
+        {draft.content.settings.business.social.map((link, i) => (
+          <Field key={link.label} label={link.label}>
+            <input
+              className="edInput"
+              value={link.href}
+              onChange={(e) =>
+                update((d) => {
+                  d.content.settings.business.social[i].href = e.target.value;
+                })
+              }
+              maxLength={300}
+              placeholder={`https://${link.label.toLowerCase()}.com/your-name`}
+            />
+          </Field>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
-const TABS = ["Photos", "Home page", "About page", "Banner"] as const;
+const TABS = ["Photos", "Home page", "About page", "Banner", "Your details"] as const;
 type Tab = (typeof TABS)[number];
 
 export function Editor({
@@ -577,6 +697,7 @@ export function Editor({
         {tab === "Home page" && <HomePanel draft={draft} update={update} stage={stage} />}
         {tab === "About page" && <AboutPanel draft={draft} update={update} stage={stage} />}
         {tab === "Banner" && <BannerPanel draft={draft} update={update} />}
+        {tab === "Your details" && <DetailsPanel draft={draft} update={update} />}
       </main>
 
       {/* Always visible, so it is never a question where the save button went. */}

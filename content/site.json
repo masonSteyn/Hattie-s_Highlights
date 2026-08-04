@@ -388,9 +388,9 @@
     "schedulingUrl": "https://calendly.com/",
     "business": {
       "name": "Hattie's Highlights",
-      "city": "Boulder",
-      "region": "Colorado",
-      "serviceArea": "Boulder and the Front Range",
+      "city": "",
+      "region": "",
+      "serviceArea": "",
       "phone": "",
       "hours": "By appointment",
       "email": "hello@hattieshighlights.com",
