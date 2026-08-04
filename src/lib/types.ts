@@ -16,9 +16,10 @@ export type ImageAsset = {
   lqip: string;
   /** Hattie writes this. It is the alt attribute and nothing else. */
   alt: string;
-  /** Set only while an image is staged in the editor: where the file will be
-   *  written on publish. Absent on anything already published. */
-  publishPath?: string;
+  /** Set only while an image is staged in the editor: a small thumbnail to
+   *  show until the real file is live. Absent on anything already published,
+   *  and stripped before the content store is written. */
+  preview?: string;
 };
 
 export type Photo = {

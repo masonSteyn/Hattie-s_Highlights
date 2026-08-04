@@ -4,8 +4,15 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { authConfig } from "@/lib/auth";
-import { getSiteContent, type SiteContent } from "@/lib/content";
-import { publishFiles, publishBlockedReason, publishConfigured, type GitFile } from "@/lib/github";
+import type { SiteContent } from "@/lib/content";
+import {
+  createBlob,
+  publishBlockedReason,
+  publishConfigured,
+  publishFiles,
+  type GitBlobRef,
+  type GitFile,
+} from "@/lib/github";
 import { prepareUpload } from "@/lib/image-metadata";
 import { verifyPassword } from "@/lib/password";
 import { rateLimit } from "@/lib/rate-limit";
@@ -49,16 +56,88 @@ export async function signOut(): Promise<void> {
   redirect("/settings");
 }
 
-/* ── Publishing ──────────────────────────────────────────────────────────── */
+/* ── Staging one photo ───────────────────────────────────────────────────── */
 
-/** Sent by the editor: the whole content store, plus any new image bytes. */
-type Draft = {
-  content: SiteContent;
-  /** Files the browser staged but has not uploaded yet, keyed by target path. */
-  newImages: { path: string; dataUrl: string }[];
+export type StagedPhoto = {
+  path: string;
+  sha: string;
+  width: number;
+  height: number;
+  lqip: string;
+  /** A small JPEG the editor can show, and keep in localStorage, until the
+   *  real file is live. Full-size data URLs would blow the storage quota. */
+  preview: string;
 };
 
-const MAX_IMAGES_PER_PUBLISH = 40;
+export type StageResult = { ok: true; photo: StagedPhoto } | { ok: false; message: string };
+
+/**
+ * Handles a single photo: validate, strip, upload as a git blob, describe.
+ *
+ * One photo per request on purpose. A Server Action body is capped at 1MB by
+ * Next and 4.5MB by Vercel, and a camera export is ~19MB once base64-encoded —
+ * so batching them into the publish call failed before any of this code ran,
+ * surfacing only as "a server error occurred". Sending them one at a time
+ * removes the ceiling and gives real per-file progress into the bargain.
+ *
+ * Nothing is committed here. A blob with no tree pointing at it is invisible
+ * and eventually collected, so abandoning a draft leaves no trace.
+ */
+export async function stagePhoto(formData: FormData): Promise<StageResult> {
+  if (!(await isSignedIn())) {
+    return { ok: false, message: "Your session has expired. Please sign in again." };
+  }
+  if (!publishConfigured()) {
+    return { ok: false, message: publishBlockedReason() ?? "Publishing is not available." };
+  }
+
+  const file = formData.get("photo");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, message: "That file did not arrive. Try again." };
+  }
+
+  const prepared = prepareUpload(new Uint8Array(await file.arrayBuffer()));
+  if (!prepared.ok) return { ok: false, message: `${file.name}: ${prepared.reason}` };
+
+  const sharp = (await import("sharp")).default;
+  const buffer = Buffer.from(prepared.bytes);
+
+  const [lqipBuffer, previewBuffer] = await Promise.all([
+    sharp(buffer).resize(20, 20, { fit: "inside" }).jpeg({ quality: 40 }).toBuffer(),
+    sharp(buffer).resize(400, 400, { fit: "inside" }).jpeg({ quality: 60 }).toBuffer(),
+  ]);
+
+  const uploaded = await createBlob(prepared.bytes);
+  if (!uploaded.ok) return { ok: false, message: uploaded.error };
+
+  const safeName =
+    file.name
+      .replace(/\.[^.]+$/, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40) || "photo";
+  const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+  const ext = prepared.format === "jpeg" ? "jpg" : prepared.format;
+
+  return {
+    ok: true,
+    photo: {
+      path: `public/photos/${safeName}-${stamp}.${ext}`,
+      sha: uploaded.sha,
+      width: prepared.width,
+      height: prepared.height,
+      lqip: `data:image/jpeg;base64,${lqipBuffer.toString("base64")}`,
+      preview: `data:image/jpeg;base64,${previewBuffer.toString("base64")}`,
+    },
+  };
+}
+
+/* ── Publishing ──────────────────────────────────────────────────────────── */
+
+/** Sent by the editor: the content store, plus references to already-uploaded
+ *  photos. Deliberately text-only — no image bytes cross this boundary. */
+type Draft = { content: SiteContent; blobs: GitBlobRef[] };
 
 /**
  * Everything Hattie changed since she last published, in one commit.
@@ -79,81 +158,56 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
   }
 
   if (!draft?.content?.photos) return NO("Those changes look incomplete. Please reload.");
-  if (draft.newImages.length > MAX_IMAGES_PER_PUBLISH) {
-    return NO(`That is ${draft.newImages.length} photos at once. Publish up to ${MAX_IMAGES_PER_PUBLISH} at a time.`);
+
+  // Paths are decided server-side in stagePhoto, but the reference list arrives
+  // from the browser — so re-check it rather than trusting it to write wherever
+  // it likes in the repository.
+  for (const blob of draft.blobs ?? []) {
+    if (!/^public\/photos\/[a-z0-9-]+\.(jpg|png|webp)$/.test(blob.path)) {
+      return NO("One of those photos has an unexpected name. Please reload and try again.");
+    }
+    if (!/^[0-9a-f]{40}$/.test(blob.sha)) {
+      return NO("One of those photos did not upload cleanly. Please reload and try again.");
+    }
   }
 
-  const files: GitFile[] = [];
-  const content = draft.content;
+  // Positions are renumbered from the order shown in the editor.
+  draft.content.photos.forEach((photo, index) => (photo.order = index));
 
-  // ── Images ──────────────────────────────────────────────────────────────
-  // Validation and metadata stripping happen here, on the server, so it does
-  // not matter what the browser sent: the bytes that get committed are the
-  // bytes this produced.
-  const sharp = (await import("sharp")).default;
+  // `preview` is a thumbnail the editor shows while a photo is staged. It has
+  // no business in the committed store — left in, every photo would carry a
+  // redundant base64 blob for the life of the repository.
+  const stripPreview = (img: { preview?: string }) => {
+    delete img.preview;
+  };
+  draft.content.photos.forEach((photo) => stripPreview(photo.image));
+  stripPreview(draft.content.home.hero);
+  stripPreview(draft.content.about.portrait);
 
-  for (const incoming of draft.newImages) {
-    const base64 = incoming.dataUrl.split(",")[1] ?? "";
-    const raw = new Uint8Array(Buffer.from(base64, "base64"));
+  const files: GitFile[] = [
+    {
+      path: "content/site.json",
+      content: `${JSON.stringify(draft.content, null, 2)}\n`,
+      encoding: "utf-8",
+    },
+  ];
 
-    const prepared = prepareUpload(raw);
-    if (!prepared.ok) return NO(`${incoming.path.split("/").pop()}: ${prepared.reason}`);
-
-    // Derive the same metadata the site needs to reserve layout space and show
-    // a blur placeholder — the job a CMS would otherwise do at ingest.
-    const buffer = Buffer.from(prepared.bytes);
-    const lqipBuffer = await sharp(buffer).resize(20, 20, { fit: "inside" }).jpeg({ quality: 40 }).toBuffer();
-    const lqip = `data:image/jpeg;base64,${lqipBuffer.toString("base64")}`;
-
-    // Stamp the real values over whatever the browser guessed.
-    const apply = (img: { src: string; width: number; height: number; lqip: string }) => {
-      if (img.src !== incoming.path.replace(/^public/, "")) return;
-      img.width = prepared.width;
-      img.height = prepared.height;
-      img.lqip = lqip;
-    };
-    for (const photo of content.photos) apply(photo.image);
-    apply(content.home.hero);
-    apply(content.about.portrait);
-
-    files.push({
-      path: incoming.path,
-      content: buffer.toString("base64"),
-      encoding: "base64",
-    });
-  }
-
-  // ── Content ─────────────────────────────────────────────────────────────
-  content.photos.forEach((photo, index) => (photo.order = index));
-
-  files.push({
-    path: "content/site.json",
-    content: `${JSON.stringify(content, null, 2)}\n`,
-    encoding: "utf-8",
-  });
-
+  const count = draft.blobs?.length ?? 0;
   const summary =
-    draft.newImages.length > 0
-      ? `Update site content and add ${draft.newImages.length} photo${draft.newImages.length === 1 ? "" : "s"}`
+    count > 0
+      ? `Update site content and add ${count} photo${count === 1 ? "" : "s"}`
       : "Update site content";
 
-  const result = await publishFiles(files, `${summary}\n\nPublished from the editor.`);
+  const result = await publishFiles(
+    files,
+    `${summary}\n\nPublished from the editor.`,
+    draft.blobs ?? [],
+  );
 
   if (!result.ok) return NO(result.error);
 
   return OK(
-    `Published ${result.files} file${result.files === 1 ? "" : "s"} as ${result.sha}. ` +
-      "The site rebuilds automatically — give it a minute or two.",
+    `Published as ${result.sha}. The site rebuilds automatically — give it a minute or two.`,
     result.url,
   );
-}
-
-/** Read-only status for the editor to show before anything is attempted. */
-export async function publishStatus(): Promise<{ ready: boolean; reason: string | null }> {
-  return { ready: publishConfigured(), reason: publishBlockedReason() };
-}
-
-/** The last published state, for the editor to reset a draft back to. */
-export async function currentContent(): Promise<SiteContent> {
-  return getSiteContent();
 }

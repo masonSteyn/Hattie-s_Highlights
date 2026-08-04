@@ -22,6 +22,9 @@ export type GitFile = {
   encoding: "utf-8" | "base64";
 };
 
+/** A file already uploaded as a blob, referenced by sha at commit time. */
+export type GitBlobRef = { path: string; sha: string };
+
 export type PublishResult =
   | { ok: true; sha: string; url: string; files: number }
   | { ok: false; error: string };
@@ -100,6 +103,35 @@ async function gh<T>(cfg: Config, path: string, init?: RequestInit): Promise<T> 
 }
 
 /**
+ * Uploads one file's bytes and returns its sha, without committing anything.
+ *
+ * This is what keeps publishing under the request-size ceiling. A Server Action
+ * body is capped at 1MB by Next and 4.5MB by Vercel's platform, so sending a
+ * batch of camera exports through the publish call fails before any of this
+ * code runs. Uploading each photo on its own, as it is chosen, means the
+ * publish request carries only text.
+ *
+ * A blob with nothing pointing at it is invisible and eventually garbage
+ * collected by GitHub, so an abandoned draft leaves no trace in history.
+ */
+export async function createBlob(
+  bytes: Uint8Array,
+): Promise<{ ok: true; sha: string } | { ok: false; error: string }> {
+  const cfg = config();
+  if (!cfg) return { ok: false, error: publishBlockedReason() ?? "Publishing is not configured." };
+
+  try {
+    const blob = await gh<{ sha: string }>(cfg, "/git/blobs", {
+      method: "POST",
+      body: JSON.stringify({ content: Buffer.from(bytes).toString("base64"), encoding: "base64" }),
+    });
+    return { ok: true, sha: blob.sha };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+/**
  * Commits every file in one go.
  *
  * Files not mentioned are left untouched: the new tree is built with the
@@ -108,10 +140,12 @@ async function gh<T>(cfg: Config, path: string, init?: RequestInit): Promise<T> 
 export async function publishFiles(
   files: GitFile[],
   message: string,
+  /** Files already uploaded via createBlob, referenced by sha. */
+  blobs: GitBlobRef[] = [],
 ): Promise<PublishResult> {
   const cfg = config();
   if (!cfg) return { ok: false, error: publishBlockedReason() ?? "Publishing is not configured." };
-  if (files.length === 0) return { ok: false, error: "Nothing to publish." };
+  if (files.length === 0 && blobs.length === 0) return { ok: false, error: "Nothing to publish." };
 
   try {
     // 1. Where the branch currently points.
@@ -120,8 +154,9 @@ export async function publishFiles(
 
     const baseCommit = await gh<{ tree: { sha: string } }>(cfg, `/git/commits/${baseSha}`);
 
-    // 2. Upload each file's bytes as a blob.
-    const blobs = await Promise.all(
+    // 2. Upload whatever bytes came with this call (the content file), and
+    //    fold in the photo blobs uploaded earlier.
+    const inline = await Promise.all(
       files.map(async (file) => {
         const blob = await gh<{ sha: string }>(cfg, "/git/blobs", {
           method: "POST",
@@ -131,10 +166,20 @@ export async function publishFiles(
       }),
     );
 
+    const entries = [
+      ...inline,
+      ...blobs.map((b) => ({
+        path: b.path,
+        mode: "100644" as const,
+        type: "blob" as const,
+        sha: b.sha,
+      })),
+    ];
+
     // 3. A tree layered on top of the current one.
     const tree = await gh<{ sha: string }>(cfg, "/git/trees", {
       method: "POST",
-      body: JSON.stringify({ base_tree: baseCommit.tree.sha, tree: blobs }),
+      body: JSON.stringify({ base_tree: baseCommit.tree.sha, tree: entries }),
     });
 
     // 4. The commit.
@@ -150,7 +195,12 @@ export async function publishFiles(
       body: JSON.stringify({ sha: commit.sha, force: false }),
     });
 
-    return { ok: true, sha: commit.sha.slice(0, 7), url: commit.html_url, files: files.length };
+    return {
+      ok: true,
+      sha: commit.sha.slice(0, 7),
+      url: commit.html_url,
+      files: entries.length,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("[publish] failed:", message);

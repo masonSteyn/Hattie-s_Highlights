@@ -3,21 +3,25 @@
 import Image from "next/image";
 import { useActionState, useCallback, useEffect, useMemo, useState } from "react";
 
-import { prepareUpload } from "@/lib/image-metadata";
 import type { SiteContent } from "@/lib/content";
 
-import { publish, signOut, type Result } from "./actions";
+import { publish, signOut, stagePhoto, type Result } from "./actions";
 
 const idle: Result = { ok: true };
 
 /** Where an unpublished draft is kept between page loads. */
 const DRAFT_KEY = "hh.draft.v1";
 
-type StagedImage = { path: string; dataUrl: string };
+/** A photo already uploaded to GitHub, waiting to be committed. */
+type BlobRef = { path: string; sha: string };
+
+/** What a freshly uploaded photo looks like to the panels. `preview` is a small
+ *  thumbnail shown until the real file is live at `src`. */
+type StagedInfo = { src: string; width: number; height: number; lqip: string; preview: string };
 
 /* ── Draft state ─────────────────────────────────────────────────────────── */
 
-type Draft = { content: SiteContent; newImages: StagedImage[] };
+type Draft = { content: SiteContent; blobs: BlobRef[] };
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -32,7 +36,7 @@ function clone<T>(value: T): T {
  * nothing is committed until she says so, and Discard puts it all back.
  */
 function useDraft(published: SiteContent) {
-  const [draft, setDraft] = useState<Draft>(() => ({ content: clone(published), newImages: [] }));
+  const [draft, setDraft] = useState<Draft>(() => ({ content: clone(published), blobs: [] }));
   const [loaded, setLoaded] = useState(false);
 
   // Restore an unfinished draft — a closed tab should not cost an afternoon's
@@ -58,9 +62,8 @@ function useDraft(published: SiteContent) {
     try {
       window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     } catch {
-      // Staged photos are held as data URLs, so a big batch can exceed the
-      // storage quota. Losing the backup is survivable; losing the draft in
-      // memory is not, so this is deliberately silent.
+      // Only small preview thumbnails are kept, so this is unlikely — but a
+      // full storage quota must not take the in-memory draft down with it.
     }
   }, [draft, loaded]);
 
@@ -74,12 +77,12 @@ function useDraft(published: SiteContent) {
 
   const discard = useCallback(() => {
     window.localStorage.removeItem(DRAFT_KEY);
-    setDraft({ content: clone(published), newImages: [] });
+    setDraft({ content: clone(published), blobs: [] });
   }, [published]);
 
   const dirty = useMemo(
     () =>
-      draft.newImages.length > 0 ||
+      draft.blobs.length > 0 ||
       JSON.stringify(draft.content) !== JSON.stringify(published),
     [draft, published],
   );
@@ -107,30 +110,6 @@ function Section({ title, intro, children }: { title: string; intro?: string; ch
       {children}
     </section>
   );
-}
-
-/** Reads a file, validates and strips it in the browser for instant feedback.
- *  The server does this again on publish — this copy is for the preview and the
- *  error message, not for security. */
-async function stageFile(file: File, targetPath: string): Promise<StagedImage | string> {
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const prepared = prepareUpload(bytes);
-  if (!prepared.ok) return `${file.name}: ${prepared.reason}`;
-
-  let binary = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < prepared.bytes.length; i += chunk) {
-    binary += String.fromCharCode(...prepared.bytes.subarray(i, i + chunk));
-  }
-  return {
-    path: targetPath,
-    dataUrl: `data:image/${prepared.format};base64,${btoa(binary)}`,
-  };
-}
-
-function slugForUpload(name: string) {
-  const base = name.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  return `${base.slice(0, 40) || "photo"}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
 }
 
 /* ── Panels ──────────────────────────────────────────────────────────────── */
@@ -173,17 +152,17 @@ function ImageSwap({
   onAlt,
 }: {
   label: string;
-  current: { src: string; width: number; height: number; lqip: string; alt: string };
+  current: { src: string; width: number; height: number; lqip: string; alt: string; preview?: string };
   onPick: (file: File) => void;
   onAlt: (alt: string) => void;
 }) {
-  const isStaged = current.src.startsWith("data:");
+  const isStaged = Boolean(current.preview);
   return (
     <div className="edForm edSwap">
       <div className="edSwapPreview">
         {isStaged ? (
-          // eslint-disable-next-line @next/next/no-img-element -- a staged file is a data URL with no known dimensions yet
-          <img src={current.src} alt={current.alt} />
+          // eslint-disable-next-line @next/next/no-img-element -- a data: thumbnail, not a file next/image can optimise
+          <img src={current.preview} alt={current.alt} />
         ) : (
           <Image
             src={current.src}
@@ -222,7 +201,7 @@ function HomePanel({
 }: {
   draft: Draft;
   update: (fn: (d: Draft) => void) => void;
-  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+  stage: (file: File, assign: (d: Draft, staged: StagedInfo) => void) => void;
 }) {
   const home = draft.content.home;
   return (
@@ -231,9 +210,8 @@ function HomePanel({
         label="The big photo at the top"
         current={home.hero}
         onPick={(file) =>
-          stage(file, (d, path, dataUrl) => {
-            d.content.home.hero.src = dataUrl;
-            d.content.home.hero.publishPath = path;
+          void stage(file, (d, staged) => {
+            d.content.home.hero = { ...d.content.home.hero, ...staged };
           })
         }
         onAlt={(alt) => update((d) => { d.content.home.hero.alt = alt; })}
@@ -289,7 +267,7 @@ function AboutPanel({
 }: {
   draft: Draft;
   update: (fn: (d: Draft) => void) => void;
-  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+  stage: (file: File, assign: (d: Draft, staged: StagedInfo) => void) => void;
 }) {
   const about = draft.content.about;
   return (
@@ -298,9 +276,8 @@ function AboutPanel({
         label="Your photo"
         current={about.portrait}
         onPick={(file) =>
-          stage(file, (d, path, dataUrl) => {
-            d.content.about.portrait.src = dataUrl;
-            d.content.about.portrait.publishPath = path;
+          void stage(file, (d, staged) => {
+            d.content.about.portrait = { ...d.content.about.portrait, ...staged };
           })
         }
         onAlt={(alt) => update((d) => { d.content.about.portrait.alt = alt; })}
@@ -333,11 +310,13 @@ function PhotosPanel({
   update,
   stage,
   errors,
+  uploading,
 }: {
   draft: Draft;
   update: (fn: (d: Draft) => void) => void;
-  stage: (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => void;
+  stage: (file: File, assign: (d: Draft, staged: StagedInfo) => void) => void;
   errors: string[];
+  uploading: number;
 }) {
   const { photos, categories } = draft.content;
   const [category, setCategory] = useState(categories[0]?.slug ?? "portraits");
@@ -369,10 +348,10 @@ function PhotosPanel({
             onChange={(e) => {
               const files = Array.from(e.target.files ?? []);
               for (const file of files) {
-                stage(file, (d, path, dataUrl) => {
+                void stage(file, (d, staged) => {
                   d.content.photos.push({
-                    _id: path,
-                    image: { src: dataUrl, width: 1600, height: 1067, lqip: "", alt: "", publishPath: path },
+                    _id: staged.src,
+                    image: { ...staged, alt: "" },
                     categories: [category],
                     featured: false,
                     order: d.content.photos.length,
@@ -392,6 +371,12 @@ function PhotosPanel({
           </select>
         </Field>
 
+        {uploading > 0 ? (
+          <p className="edUploading" role="status">
+            Uploading {uploading} photo{uploading === 1 ? "" : "s"}…
+          </p>
+        ) : null}
+
         {errors.length > 0 ? (
           <div className="edErrorList">
             {errors.map((e) => <p key={e} className="edError">{e}</p>)}
@@ -401,13 +386,13 @@ function PhotosPanel({
 
       <ul className="edPhotoList">
         {photos.map((photo, index) => {
-          const staged = photo.image.src.startsWith("data:");
+          const staged = Boolean(photo.image.preview);
           return (
             <li key={photo._id} className="edPhoto">
               <div className="edPhotoThumb">
                 {staged ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- staged data URL, dimensions unknown until publish
-                  <img src={photo.image.src} alt={photo.image.alt || "New photo"} />
+                  // eslint-disable-next-line @next/next/no-img-element -- a data: thumbnail, not a file next/image can optimise
+                  <img src={photo.image.preview} alt={photo.image.alt || "New photo"} />
                 ) : (
                   <Image src={photo.image.src} alt={photo.image.alt} width={photo.image.width}
                     height={photo.image.height} placeholder="blur" blurDataURL={photo.image.lqip} sizes="160px" />
@@ -446,8 +431,9 @@ function PhotosPanel({
                     onClick={() =>
                       update((d) => {
                         const removed = d.content.photos.splice(index, 1)[0];
-                        const path = removed.image.publishPath;
-                        if (path) d.newImages = d.newImages.filter((i) => i.path !== path);
+                        // Drop the upload too, so removing a just-added photo
+                        // does not commit an orphan file.
+                        d.blobs = d.blobs.filter((b) => b.path !== `public${removed.image.src}`);
                       })
                     }
                   >
@@ -482,6 +468,7 @@ export function Editor({
   const [tab, setTab] = useState<Tab>("Photos");
   const { draft, update, discard, dirty, loaded } = useDraft(published);
   const [errors, setErrors] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(0);
   const [state, formAction, pending] = useActionState(publish, idle);
 
   // Once a publish succeeds the draft is the published state, so clear it.
@@ -491,22 +478,42 @@ export function Editor({
     }
   }, [state]);
 
+  /**
+   * Uploads one photo and records a reference to it.
+   *
+   * The file goes straight to the server, which validates it, strips its
+   * metadata, and stores it as a git blob — nothing is committed until Publish.
+   * Only a reference and a small preview come back, which is what keeps the
+   * publish request small enough to succeed and the draft small enough to
+   * survive in localStorage.
+   */
   const stage = useCallback(
-    async (file: File, assign: (d: Draft, path: string, dataUrl: string) => void) => {
-      const ext = file.name.match(/\.(jpe?g|png|webp)$/i)?.[0] ?? ".jpg";
-      const path = `public/photos/${slugForUpload(file.name)}${ext.toLowerCase()}`;
-      const result = await stageFile(file, path);
+    async (file: File, assign: (d: Draft, staged: StagedInfo) => void) => {
+      setUploading((n) => n + 1);
+      try {
+        const body = new FormData();
+        body.append("photo", file);
+        const result = await stagePhoto(body);
 
-      if (typeof result === "string") {
-        setErrors((e) => [...e, result]);
-        return;
+        if (!result.ok) {
+          setErrors((e) => [...e, result.message]);
+          return;
+        }
+
+        setErrors([]);
+        const { path, sha, width, height, lqip, preview } = result.photo;
+        update((d) => {
+          d.blobs.push({ path, sha });
+          assign(d, { src: path.replace(/^public/, ""), width, height, lqip, preview });
+        });
+      } catch {
+        setErrors((e) => [
+          ...e,
+          `${file.name}: the upload did not complete. Check your connection and try again.`,
+        ]);
+      } finally {
+        setUploading((n) => n - 1);
       }
-
-      setErrors([]);
-      update((d) => {
-        d.newImages.push(result);
-        assign(d, path.replace(/^public/, ""), result.dataUrl);
-      });
     },
     [update],
   );
@@ -515,7 +522,7 @@ export function Editor({
   // never disagree about what is on screen.
   if (!loaded) return <div className="ed"><p className="edIntro">Loading…</p></div>;
 
-  const staged = draft.newImages.length;
+  const staged = draft.blobs.length;
 
   return (
     <div className="ed">
@@ -564,7 +571,9 @@ export function Editor({
       </nav>
 
       <main className="edMain">
-        {tab === "Photos" && <PhotosPanel draft={draft} update={update} stage={stage} errors={errors} />}
+        {tab === "Photos" && (
+          <PhotosPanel draft={draft} update={update} stage={stage} errors={errors} uploading={uploading} />
+        )}
         {tab === "Home page" && <HomePanel draft={draft} update={update} stage={stage} />}
         {tab === "About page" && <AboutPanel draft={draft} update={update} stage={stage} />}
         {tab === "Banner" && <BannerPanel draft={draft} update={update} />}
@@ -597,8 +606,11 @@ export function Editor({
           ) : null}
           <form action={formAction}>
             <input type="hidden" name="draft" value={JSON.stringify(draft)} />
-            <button className="edButton edButtonPrimary" disabled={!dirty || pending || !publishReady}>
-              {pending ? "Publishing…" : "Publish changes"}
+            <button
+              className="edButton edButtonPrimary"
+              disabled={!dirty || pending || !publishReady || uploading > 0}
+            >
+              {pending ? "Publishing…" : uploading > 0 ? "Waiting for uploads…" : "Publish changes"}
             </button>
           </form>
         </div>
