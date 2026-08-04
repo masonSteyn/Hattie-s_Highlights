@@ -529,6 +529,12 @@
   margin-top: var(--s-4);
 }
 
+/* Upload progress and failures, sitting above whichever panel is open rather
+   than inside the Photos panel — see UploadStatus in Editor.tsx. */
+.edUploadStatus:not(:empty) {
+  margin-bottom: var(--s-5);
+}
+
 /* Configuration report inside the cannot-publish banner. */
 .edEnvList {
   margin: var(--s-3) 0 var(--s-2);

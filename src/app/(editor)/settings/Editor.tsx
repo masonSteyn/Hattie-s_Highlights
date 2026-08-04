@@ -163,6 +163,40 @@ function Section({ title, intro, children }: { title: string; intro?: string; ch
   );
 }
 
+/**
+ * Upload progress and failures, for every tab.
+ *
+ * This used to live inside the Photos panel, which meant a failed upload on the
+ * Home or About tab — where the hero and the portrait are replaced — set the
+ * error in state and then rendered it nowhere. Picking a file appeared to do
+ * absolutely nothing: no preview, no error, not even a dirty marker. Keeping it
+ * here, above whichever panel is showing, is what stops that recurring the next
+ * time something gains an image field.
+ */
+function UploadStatus({ errors, uploading }: { errors: string[]; uploading: number }) {
+  if (uploading === 0 && errors.length === 0) return null;
+
+  return (
+    <div className="edUploadStatus">
+      {uploading > 0 ? (
+        <p className="edUploading" role="status">
+          Uploading {uploading} photo{uploading === 1 ? "" : "s"}…
+        </p>
+      ) : null}
+
+      {errors.length > 0 ? (
+        // Keyed by position, not by message: two files can fail for the same
+        // reason, and identical keys let React drop one of the two.
+        <div className="edErrorList" role="alert">
+          {errors.map((e, i) => (
+            <p key={`${i}-${e}`} className="edError">{e}</p>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /* ── Panels ──────────────────────────────────────────────────────────────── */
 
 function BannerPanel({ draft, update }: { draft: Draft; update: (fn: (d: Draft) => void) => void }) {
@@ -234,7 +268,15 @@ function ImageSwap({
             type="file"
             accept="image/jpeg,image/png,image/webp"
             className="edFile"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              // Clear the input before handling it. A file input fires no
+              // change event when the same file is picked twice running, so
+              // without this the obvious response to a failed upload — choose
+              // that photo again — does nothing whatsoever.
+              e.target.value = "";
+              if (f) onPick(f);
+            }}
           />
         </Field>
         <Field label="Describe it">
@@ -360,14 +402,10 @@ function PhotosPanel({
   draft,
   update,
   stage,
-  errors,
-  uploading,
 }: {
   draft: Draft;
   update: (fn: (d: Draft) => void) => void;
   stage: (file: File, assign: (d: Draft, staged: StagedInfo) => void) => void;
-  errors: string[];
-  uploading: number;
 }) {
   const { photos, categories } = draft.content;
   const [category, setCategory] = useState(categories[0]?.slug ?? "portraits");
@@ -398,6 +436,9 @@ function PhotosPanel({
             className="edFile"
             onChange={(e) => {
               const files = Array.from(e.target.files ?? []);
+              // Same reason as the single-image picker: re-selecting the same
+              // files after a failure has to fire again.
+              e.target.value = "";
               for (const file of files) {
                 void stage(file, (d, staged) => {
                   d.content.photos.push({
@@ -422,17 +463,6 @@ function PhotosPanel({
           </select>
         </Field>
 
-        {uploading > 0 ? (
-          <p className="edUploading" role="status">
-            Uploading {uploading} photo{uploading === 1 ? "" : "s"}…
-          </p>
-        ) : null}
-
-        {errors.length > 0 ? (
-          <div className="edErrorList">
-            {errors.map((e) => <p key={e} className="edError">{e}</p>)}
-          </div>
-        ) : null}
       </div>
 
       <ul className="edPhotoList">
@@ -742,8 +772,11 @@ export function Editor({
       </nav>
 
       <main className="edMain">
+        {/* Above the panels, so an upload that fails on any tab says so. */}
+        <UploadStatus errors={errors} uploading={uploading} />
+
         {tab === "Photos" && (
-          <PhotosPanel draft={draft} update={update} stage={stage} errors={errors} uploading={uploading} />
+          <PhotosPanel draft={draft} update={update} stage={stage} />
         )}
         {tab === "Home page" && <HomePanel draft={draft} update={update} stage={stage} />}
         {tab === "About page" && <AboutPanel draft={draft} update={update} stage={stage} />}
