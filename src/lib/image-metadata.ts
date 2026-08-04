@@ -251,13 +251,12 @@ function concat(parts: Uint8Array[]) {
 
 /* ── Policy ──────────────────────────────────────────────────────────────── */
 
-export const UPLOAD_LIMITS = {
-  /** Comfortably above a full-frame Lightroom export; well below a zip bomb. */
-  maxBytes: 40 * 1024 * 1024,
-  /** Guards the image pipeline against a decompression bomb. */
-  maxDimension: 12_000,
-  maxPixels: 60_000_000,
-} as const;
+/* The ceilings live in their own module so the editor can import them without
+   pulling this whole file into the client bundle. See the note there on why the
+   byte limit is what it is — it is bounded by transport, not by taste. */
+import { UPLOAD_LIMITS, tooLargeMessage } from "./upload-limits";
+
+export { UPLOAD_LIMITS };
 
 export type PreparedUpload =
   | {
@@ -277,13 +276,10 @@ export type PreparedUpload =
  */
 export function prepareUpload(input: Uint8Array): PreparedUpload {
   if (input.length === 0) return { ok: false, reason: "That file is empty." };
+  // The editor checks this before uploading, so reaching it here means the file
+  // arrived some other way. Same wording either way.
   if (input.length > UPLOAD_LIMITS.maxBytes) {
-    return {
-      ok: false,
-      reason: `That file is ${(input.length / 1024 / 1024).toFixed(0)} MB. The limit is ${
-        UPLOAD_LIMITS.maxBytes / 1024 / 1024
-      } MB.`,
-    };
+    return { ok: false, reason: tooLargeMessage(input.length) };
   }
 
   const probed = probe(input);

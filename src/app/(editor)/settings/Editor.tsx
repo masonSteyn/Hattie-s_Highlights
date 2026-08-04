@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useActionState, useCallback, useEffect, useMemo, useState } from "react";
 
 import type { SiteContent } from "@/lib/content";
+import { MAX_UPLOAD_LABEL, UPLOAD_LIMITS, tooLargeMessage } from "@/lib/upload-limits";
 
 import { publish, signOut, stagePhoto, type Result } from "./actions";
 
@@ -263,7 +264,7 @@ function ImageSwap({
       </div>
 
       <div className="edSwapFields">
-        <Field label={label}>
+        <Field label={label} hint={`JPEG, PNG, or WebP, up to ${MAX_UPLOAD_LABEL}.`}>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -427,7 +428,7 @@ function PhotosPanel({
       <div className="edForm edUpload">
         <Field
           label="Add photos"
-          hint="Drag them straight off the camera — no need to resize. Where the photo was taken is removed automatically."
+          hint={`JPEG, PNG, or WebP, up to ${MAX_UPLOAD_LABEL} each — a file straight off the camera is often larger than that and will need exporting smaller first. Where the photo was taken is removed automatically.`}
         >
           <input
             type="file"
@@ -690,6 +691,17 @@ export function Editor({
    */
   const stage = useCallback(
     async (file: File, assign: (d: Draft, staged: StagedInfo) => void) => {
+      /* Check the size here, before the network.
+         Over the transport limit the request is rejected by the framework
+         before any of our code runs, so the server cannot explain what went
+         wrong — all it can produce is "the upload did not complete", which
+         reads like a connection problem and sends you off retrying a file that
+         will never work. Failing here is instant and says what to do. */
+      if (file.size > UPLOAD_LIMITS.maxBytes) {
+        setErrors((e) => [...e, `${file.name}: ${tooLargeMessage(file.size)}`]);
+        return;
+      }
+
       setUploading((n) => n + 1);
       try {
         const body = new FormData();

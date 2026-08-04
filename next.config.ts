@@ -81,11 +81,33 @@ const sharedHeaders = [
   },
 ];
 
+/**
+ * Ceiling on a Server Action request body.
+ *
+ * Next defaults this to 1MB, and the limit is enforced before any application
+ * code runs — so a photo over it never reached the upload validator and failed
+ * as a bare thrown request, surfacing as "the upload did not complete". Every
+ * photo above 1MB was rejected while the validator advertised a 40MB limit.
+ *
+ * 4MB rather than higher because Vercel caps a request body at about 4.5MB no
+ * matter what this says, and being rejected by the platform instead of by Next
+ * puts us straight back to an unexplained failure.
+ *
+ * Kept in step with UPLOAD_LIMITS.maxBytes by `npm run check:limits`, which is
+ * the only thing standing between a future edit and the same silent bug. It is
+ * duplicated rather than imported for the reason given above SCHEDULING_PROVIDERS.
+ */
+const SERVER_ACTION_BODY_LIMIT = "4mb";
+
 const nextConfig: NextConfig = {
   // Pin the workspace root. Without this, a stray lockfile in a parent folder
   // makes Turbopack infer that folder as the root and quietly resolve modules
   // from the wrong tree.
   turbopack: { root: process.cwd() },
+
+  experimental: {
+    serverActions: { bodySizeLimit: SERVER_ACTION_BODY_LIMIT },
+  },
 
   images: {
     // Every image is served from /public in this repo, so no remote origin is

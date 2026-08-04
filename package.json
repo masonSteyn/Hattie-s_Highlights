@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:providers": "node scripts/check-providers.mjs",
+    "check:limits": "node scripts/check-upload-limit.mjs",
     "content": "node scripts/build-content.mjs"
   },
   "dependencies": {
