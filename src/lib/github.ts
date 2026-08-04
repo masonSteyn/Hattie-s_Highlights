@@ -41,8 +41,24 @@ export function publishConfigured() {
 }
 
 export function publishBlockedReason(): string | null {
-  if (!process.env.GITHUB_TOKEN) return "No GitHub token is configured, so changes cannot be published.";
-  if (!process.env.GITHUB_REPO?.includes("/")) return "GITHUB_REPO must be set to owner/repository.";
+  if (!process.env.GITHUB_TOKEN) {
+    return "No GitHub token is configured, so changes cannot be published.";
+  }
+
+  const slug = process.env.GITHUB_REPO;
+  if (!slug) {
+    return "GITHUB_REPO is not set. It needs the owner too, like owner/repository.";
+  }
+  if (!slug.includes("/")) {
+    // Echoing the offending value turns a guessing game into a one-look fix.
+    // GITHUB_REPO is not a secret — unlike the token, which is never echoed.
+    return `GITHUB_REPO is "${slug}", which is missing the owner. It should look like owner/${slug}.`;
+  }
+  if (slug.trim() !== slug) {
+    // A trailing space pasted into a dashboard field is invisible and produces
+    // a 404 that looks like a permissions problem.
+    return `GITHUB_REPO has a stray space around it ("${slug}"). Retype it without one.`;
+  }
   return null;
 }
 
