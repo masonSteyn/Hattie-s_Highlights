@@ -385,19 +385,19 @@
       "enabled": true,
       "text": "Booking fall 2026 — 3 dates left"
     },
-    "schedulingUrl": "https://calendly.com/hattie/consult",
+    "schedulingUrl": "https://calendly.com/",
     "business": {
       "name": "Hattie's Highlights",
-      "city": "TODO_CITY",
-      "region": "TODO_STATE",
-      "serviceArea": "TODO_CITY and surrounding counties",
+      "city": "Boulder",
+      "region": "Colorado",
+      "serviceArea": "Boulder and the Front Range",
       "phone": "",
       "hours": "By appointment",
-      "email": "hattie@example.com",
+      "email": "hello@hattieshighlights.com",
       "social": [
         {
           "label": "Instagram",
-          "href": "https://instagram.com/hattie"
+          "href": "https://instagram.com/"
         },
         {
           "label": "Facebook",
