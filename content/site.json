@@ -239,6 +239,21 @@
       ],
       "featured": false,
       "order": 15
+    },
+    {
+      "_id": "/photos/img-0962-msfn1xcjzlg.jpg",
+      "image": {
+        "src": "/photos/img-0962-msfn1xcjzlg.jpg",
+        "width": 1280,
+        "height": 1920,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUEBv/EACAQAAIBBAIDAQAAAAAAAAAAAAECEQADBCEiMRVBUWH/xAAWAQEBAQAAAAAAAAAAAAAAAAADAgT/xAAZEQEBAQADAAAAAAAAAAAAAAABABECAxL/2gAMAwEAAhEDEQA/ALWLwICmVAgkammRcdHCrK/ZrmsbOuW1AY6GgOp3VHy62xF24HPqNxVnaLqR+E45tDMBRAHdaRiWiitykj7+0pWadv/Z",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 16
     }
   ],
   "categories": [
