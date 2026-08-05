@@ -211,31 +211,31 @@
       "order": 13
     },
     {
-      "_id": "/photos/img-1370-msfmmfxzo37.jpg",
+      "_id": "/photos/img-0791-msfmf6xqf20.jpg",
       "image": {
-        "src": "/photos/img-1370-msfmmfxzo37.jpg",
+        "src": "/photos/img-0791-msfmf6xqf20.jpg",
         "width": 1920,
         "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIFAQP/xAAiEAACAgEDBAMAAAAAAAAAAAABAgMRAAQSIQUxQWFRscH/xAAWAQEBAQAAAAAAAAAAAAAAAAACAAP/xAAZEQEAAgMAAAAAAAAAAAAAAAAAAQIRITH/2gAMAwEAAhEDEQA/AJnUC02v1DqLWOtx+B2+znfXbGjVI+yjwb4zdEo36uY2WkDH0KevzG6sqwpG6KASxHHsZnad4KvEtY447UEjnzhisd1EjmsMSf/Z",
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMFBP/EACIQAAICAgEDBQAAAAAAAAAAAAECAAMEEQUTQVEUIWFxg//EABUBAQEAAAAAAAAAAAAAAAAAAAED/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/ANlPK4/au0/mYmjnLb1yEKdIo5CMtZbY7b8SL6pwhHkEReLa1Z2vsNEalkottzOSh0GdvnoGElNl27OiAPqERH//2Q==",
         "alt": ""
       },
       "categories": [
-        "nature"
+        "portraits"
       ],
       "featured": false,
       "order": 14
     },
     {
-      "_id": "/photos/img-0930-msfmoli96lk.jpg",
+      "_id": "/photos/img-0810-msfmg4cjb6b.jpg",
       "image": {
-        "src": "/photos/img-0930-msfmoli96lk.jpg",
+        "src": "/photos/img-0810-msfmg4cjb6b.jpg",
         "width": 1920,
         "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAMEAQX/xAAiEAABAwQCAgMAAAAAAAAAAAABAAIRAwQSMQUhE0EiYYH/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREv/aAAwDAQACEQMRAD8Ai434W909pcXAwG5EfQn9WsZVkirjvbfafwwmjdzBzdGldRtm125OJyOiPSPCyENuPyFSLojyvbAAiddIS+TgXrhA6ACEgjt//9k=",
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQFBv/EACAQAAICAgICAwAAAAAAAAAAAAECAAQDEQUhMVESMnH/xAAVAQEBAAAAAAAAAAAAAAAAAAABAv/EABcRAQEBAQAAAAAAAAAAAAAAAAABESH/2gAMAwEAAhEDEQA/AMxx2Jc1kBxtR2QfB/fUe5Xh2qI1jAS2Df1PlRI6O2NgyMVYdgg9iW63LZbVc186BgRon3C6Zl4i/KEeaggdgGOt9QlJf//Z",
         "alt": ""
       },
       "categories": [
-        "portraits"
+        "events"
       ],
       "featured": false,
       "order": 15
@@ -315,9 +315,11 @@
     },
     "heading": "About Hattie",
     "body": [
-      "Hi, I'm Hattie- the girl behind the camera. I'm a natural light photographer currently based in Fort Worth, TX. I have always had a knack for photography, and now I get to use that to help others get the photos of their dreams. When I'm not chasing the sunset with my camera in hand or corralling little ones and fur babies for family photos, I'm surrounding myself with my favorite people and my own fur babies, most likely outdoors."
+      "Hi, I'm Hattie- the girl behind the camera. I'm a natural light photographer currently based in Fort Worth, TX. I have always had a knack for photography, and now I get to use that to help others get the photos of their dreams. When I'm not chasing the sunset with my camera in hand or corralling little ones and fur babies for family photos, I'm surrounding myself with my favorite people and my own fur babies, most likely outdoors.",
+      "For me, photography has always been more than just a pretty picture - it is about preserving special moments, big or small, that become some of our favorite memories. From quiet smiles, emotional tears, loud laughter, and the in-between, I am here to capture it.  I love photographing people.",
+      "My goal is to create a relaxed experience filled with real emotions where you feel your best. If you have never been in front of the camera or don’t like it - don’t worry. Almost everyone tells me they’re nervous, and within several minutes they’re more relaxed. Just be yourself, and I’ll do the rest."
     ],
-    "pullQuote": ""
+    "pullQuote": "I can't wait to capture your story."
   },
   "booking": {
     "heading": "Booking",
@@ -346,7 +348,7 @@
       "serviceArea": "",
       "phone": "",
       "hours": "By appointment",
-      "email": "hello@hattieshighlights.com",
+      "email": "hatmcollins@icloud.com",
       "social": [
         {
           "label": "Instagram",
