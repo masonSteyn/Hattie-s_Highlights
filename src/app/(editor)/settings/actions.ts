@@ -198,8 +198,29 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
     }
   }
 
+  /* Session types fill the Contact form's dropdown as well as the Booking page,
+     and that field is required — so publishing an empty list would leave a form
+     nobody can complete, with nothing on either page explaining why. */
+  const sessions = draft.content.sessionTypes;
+  if (sessions.length === 0) {
+    return NO(
+      "Keep at least one session type. They fill the dropdown on the Contact page, and without one nobody can send you an enquiry.",
+    );
+  }
+
+  for (const session of sessions) {
+    if (!session.title.trim()) {
+      return NO("One of the session types has no name. Give it one, or remove it.");
+    }
+    // The price is rendered straight into "from $X"; a NaN would reach the page.
+    if (!Number.isFinite(session.startingPrice) || session.startingPrice < 0) {
+      return NO(`"${session.title}" needs a starting price of zero or more.`);
+    }
+  }
+
   // Positions are renumbered from the order shown in the editor.
   draft.content.photos.forEach((photo, index) => (photo.order = index));
+  sessions.forEach((session, index) => (session.order = index));
 
   // `preview` is a thumbnail the editor shows while a photo is staged. It has
   // no business in the committed store — left in, every photo would carry a

@@ -340,6 +340,36 @@
   gap: var(--s-4);
 }
 
+/* Session types on the Booking tab. Same row treatment as a photo, since it is
+   the same idea: a list of things with fields and reordering. */
+.edSessionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+
+.edSession {
+  display: flex;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  border: 1px solid var(--rule-sage-faint);
+  border-radius: var(--radius-control);
+}
+
+.edSessionFields {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.edSessionActions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: stretch;
+}
+
 .edPhoto {
   display: flex;
   gap: var(--s-4);
@@ -453,6 +483,14 @@
 
   .edPhoto {
     flex-direction: column;
+  }
+
+  .edSession {
+    flex-direction: column;
+  }
+
+  .edSessionActions {
+    flex-direction: row;
   }
 
   .edPhotoThumb {

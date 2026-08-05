@@ -414,6 +414,140 @@ function AboutPanel({
   );
 }
 
+/** A new session type needs an id nothing else is using. */
+function newSessionId() {
+  return `session-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+}
+
+function BookingPanel({
+  draft,
+  update,
+}: {
+  draft: Draft;
+  update: (fn: (d: Draft) => void) => void;
+}) {
+  const booking = draft.content.booking;
+  const sessions = draft.content.sessionTypes;
+
+  const move = (index: number, delta: number) =>
+    update((d) => {
+      const target = index + delta;
+      if (target < 0 || target >= d.content.sessionTypes.length) return;
+      const [moved] = d.content.sessionTypes.splice(index, 1);
+      d.content.sessionTypes.splice(target, 0, moved);
+    });
+
+  return (
+    <Section title="Booking page">
+      <div className="edForm">
+        <Field label="Heading">
+          <input className="edInput" value={booking.heading} maxLength={60}
+            onChange={(e) => update((d) => { d.content.booking.heading = e.target.value; })} />
+        </Field>
+
+        <Field label="What to expect" hint="Sits above the calendar. Leave a blank line between paragraphs.">
+          <textarea className="edInput edTextarea" rows={8} value={booking.intro.join("\n\n")}
+            onChange={(e) =>
+              update((d) => {
+                d.content.booking.intro = e.target.value
+                  .split(/\n\s*\n/)
+                  .map((p) => p.trim())
+                  .filter(Boolean);
+              })
+            } />
+        </Field>
+
+        <Field
+          label="If the calendar will not load"
+          hint="Shown under the calendar. Your email address and “— tell me the date and I will check it by hand” are added after this automatically."
+        >
+          <input className="edInput" value={booking.fallbackNote} maxLength={120}
+            onChange={(e) => update((d) => { d.content.booking.fallbackNote = e.target.value; })} />
+        </Field>
+      </div>
+
+      <div className="edForm">
+        <p className="edNote">
+          Session types and their starting prices. These show on this page <em>and</em> fill the
+          dropdown on the Contact page, so a change here shows up in both — including on enquiries
+          people send you.
+        </p>
+
+        <ul className="edSessionList">
+          {sessions.map((session, index) => (
+            <li key={session._id} className="edSession">
+              <div className="edSessionFields">
+                <Field label="Name">
+                  <input className="edInput" value={session.title} maxLength={60}
+                    onChange={(e) =>
+                      update((d) => { d.content.sessionTypes[index].title = e.target.value; })
+                    } />
+                </Field>
+
+                <Field label="Starting price" hint="Whole dollars. Shown as “from $X”.">
+                  <input
+                    className="edInput"
+                    type="number"
+                    min={0}
+                    step={10}
+                    value={session.startingPrice}
+                    onChange={(e) =>
+                      update((d) => {
+                        // An empty box reads as 0 rather than NaN, which would
+                        // reach the store and render as "from $NaN".
+                        const n = Number(e.target.value);
+                        d.content.sessionTypes[index].startingPrice =
+                          Number.isFinite(n) && n >= 0 ? Math.round(n) : 0;
+                      })
+                    } />
+                </Field>
+
+                <Field label="Description">
+                  <textarea className="edInput edTextarea" rows={2} maxLength={300}
+                    value={session.description}
+                    onChange={(e) =>
+                      update((d) => { d.content.sessionTypes[index].description = e.target.value; })
+                    } />
+                </Field>
+              </div>
+
+              <div className="edSessionActions">
+                <button type="button" className="edButtonSmall" disabled={index === 0}
+                  onClick={() => move(index, -1)} aria-label={`Move ${session.title} up`}>↑</button>
+                <button type="button" className="edButtonSmall" disabled={index === sessions.length - 1}
+                  onClick={() => move(index, 1)} aria-label={`Move ${session.title} down`}>↓</button>
+                <button type="button" className="edButtonSmall"
+                  onClick={() =>
+                    update((d) => { d.content.sessionTypes.splice(index, 1); })
+                  }
+                  aria-label={`Remove ${session.title}`}>Remove</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          className="edButtonSmall"
+          onClick={() =>
+            update((d) => {
+              d.content.sessionTypes.push({
+                _id: newSessionId(),
+                title: "New session type",
+                description: "",
+                startingPrice: 0,
+                order: d.content.sessionTypes.length,
+              });
+            })
+          }
+        >
+          Add a session type
+        </button>
+      </div>
+    </Section>
+  );
+}
+
 function PhotosPanel({
   draft,
   update,
@@ -668,7 +802,14 @@ function DetailsPanel({ draft, update }: { draft: Draft; update: (fn: (d: Draft)
 
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
-const TABS = ["Photos", "Home page", "About page", "Banner", "Your details"] as const;
+const TABS = [
+  "Photos",
+  "Home page",
+  "About page",
+  "Booking page",
+  "Banner",
+  "Your details",
+] as const;
 type Tab = (typeof TABS)[number];
 
 export function Editor({
@@ -838,6 +979,7 @@ export function Editor({
         )}
         {tab === "Home page" && <HomePanel draft={draft} update={update} stage={stage} />}
         {tab === "About page" && <AboutPanel draft={draft} update={update} stage={stage} />}
+        {tab === "Booking page" && <BookingPanel draft={draft} update={update} />}
         {tab === "Banner" && <BannerPanel draft={draft} update={update} />}
         {tab === "Your details" && <DetailsPanel draft={draft} update={update} />}
       </main>
