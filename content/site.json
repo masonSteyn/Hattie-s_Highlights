@@ -324,7 +324,7 @@
   "booking": {
     "heading": "Booking",
     "intro": [
-      "Booking your session is simple! Choose a date that works for you, and I'll be in touch to learn more about your vision, answer any questions, and help plan a session that feels true to you"
+      "Booking your session is simple! Fill out the form and choose a date that works for you. I'll then be in touch to learn more about your vision, answer any questions, and help plan a session that feels true to you."
     ],
     "fallbackNote": "Calendar not loading?"
   },
