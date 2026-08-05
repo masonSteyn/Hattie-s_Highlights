@@ -271,21 +271,21 @@
     {
       "_id": "weddings",
       "title": "Weddings",
-      "description": "Full-day coverage, and an online gallery within three weeks.",
+      "description": "Coverage designed around your wedding day, a beautifully edited online gallery, and timeless images that let you relive every moment for years to come.",
       "startingPrice": 2500,
       "order": 0
     },
     {
       "_id": "portraits",
       "title": "Portraits",
-      "description": "Seniors, families, headshots. About ninety minutes, one location.",
-      "startingPrice": 350,
+      "description": "Great for seniors, couples, families, graduates, and just-because moments. Includes up to 90 minutes at one location and a professionally edited online gallery.",
+      "startingPrice": 300,
       "order": 1
     },
     {
       "_id": "events",
       "title": "Events",
-      "description": "Showers, reunions, milestone parties. Priced by the hour.",
+      "description": "From birthday parties and graduations to showers, reunions, and community events, I'll document the moments as they naturally unfold with an edited gallery at the end. Priced by the hour.",
       "startingPrice": 200,
       "order": 2
     }
