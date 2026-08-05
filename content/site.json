@@ -324,8 +324,7 @@
   "booking": {
     "heading": "Booking",
     "intro": [
-      "Pick a time below and we will talk for twenty minutes — what you want, where, roughly when, and whether I am the right person for it. No deposit at this stage.",
-      "If nothing on the calendar works, email me and we will find something. Weekends book out first, usually three to four months ahead."
+      "Booking your session is simple! Choose a date that works for you, and I'll be in touch to learn more about your vision, answer any questions, and help plan a session that feels true to you"
     ],
     "fallbackNote": "Calendar not loading?"
   },
