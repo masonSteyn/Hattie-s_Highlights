@@ -239,51 +239,6 @@
       ],
       "featured": false,
       "order": 15
-    },
-    {
-      "_id": "/photos/img-0930-msfn8638440.jpg",
-      "image": {
-        "src": "/photos/img-0930-msfn8638440.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAMEAQX/xAAiEAABAwQCAgMAAAAAAAAAAAABAAIRAwQSMQUhE0EiYYH/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREv/aAAwDAQACEQMRAD8Ai434W909pcXAwG5EfQn9WsZVkirjvbfafwwmjdzBzdGldRtm125OJyOiPSPCyENuPyFSLojyvbAAiddIS+TgXrhA6ACEgjt//9k=",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": false,
-      "order": 16
-    },
-    {
-      "_id": "/photos/img-0962-msfn1xcjzlg.jpg",
-      "image": {
-        "src": "/photos/img-0962-msfn1xcjzlg.jpg",
-        "width": 1280,
-        "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUEBv/EACAQAAIBBAIDAQAAAAAAAAAAAAECEQADBCEiMRVBUWH/xAAWAQEBAQAAAAAAAAAAAAAAAAADAgT/xAAZEQEBAQADAAAAAAAAAAAAAAABABECAxL/2gAMAwEAAhEDEQA/ALWLwICmVAgkammRcdHCrK/ZrmsbOuW1AY6GgOp3VHy62xF24HPqNxVnaLqR+E45tDMBRAHdaRiWiitykj7+0pWadv/Z",
-        "alt": ""
-      },
-      "categories": [
-        "nature"
-      ],
-      "featured": false,
-      "order": 17
-    },
-    {
-      "_id": "/photos/img-1370-msfn8m249ws.jpg",
-      "image": {
-        "src": "/photos/img-1370-msfn8m249ws.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIFAQP/xAAiEAACAgEDBAMAAAAAAAAAAAABAgMRAAQSIQUxQWFRscH/xAAWAQEBAQAAAAAAAAAAAAAAAAACAAP/xAAZEQEAAgMAAAAAAAAAAAAAAAAAAQIRITH/2gAMAwEAAhEDEQA/AJnUC02v1DqLWOtx+B2+znfXbGjVI+yjwb4zdEo36uY2WkDH0KevzG6sqwpG6KASxHHsZnad4KvEtY447UEjnzhisd1EjmsMSf/Z",
-        "alt": ""
-      },
-      "categories": [
-        "nature"
-      ],
-      "featured": false,
-      "order": 18
     }
   ],
   "categories": [
@@ -316,7 +271,7 @@
     {
       "_id": "weddings",
       "title": "Weddings",
-      "description": "Full-day coverage, two shooters, and an online gallery within three weeks.",
+      "description": "Full-day coverage, and an online gallery within three weeks.",
       "startingPrice": 2800,
       "order": 0
     },
