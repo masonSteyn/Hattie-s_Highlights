@@ -147,7 +147,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": true,
+      "featured": false,
       "order": 9
     },
     {
@@ -207,7 +207,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": false,
+      "featured": true,
       "order": 13
     },
     {
