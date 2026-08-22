@@ -147,7 +147,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": true,
+      "featured": false,
       "order": 9
     },
     {
@@ -162,7 +162,7 @@
       "categories": [
         "nature"
       ],
-      "featured": true,
+      "featured": false,
       "order": 10
     },
     {
@@ -177,7 +177,7 @@
       "categories": [
         "nature"
       ],
-      "featured": true,
+      "featured": false,
       "order": 11
     },
     {
@@ -207,7 +207,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": false,
+      "featured": true,
       "order": 13
     },
     {
@@ -271,12 +271,12 @@
       "order": 17
     },
     {
-      "_id": "/photos/img-1529-msig9efk89f.jpg",
+      "_id": "/photos/img-1458-mskvli962st.jpg",
       "image": {
-        "src": "/photos/img-1529-msig9efk89f.jpg",
+        "src": "/photos/img-1458-mskvli962st.jpg",
         "width": 1280,
         "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAQFAgP/xAAiEAACAQQBBAMAAAAAAAAAAAABAgMABBESUQUTMUEhgbH/xAAXAQADAQAAAAAAAAAAAAAAAAABAgME/8QAGREBAQADAQAAAAAAAAAAAAAAAQADERIx/9oADAMBAAIRAxEAPwDF71JI5HEaDualSeec81FlmDNnweBXeCcLc7tHsW+D4wc01eWNtKUNuVjIGrqT7HupBtm4SnwMe59r+0xcjF1KRkZaiige2vFf/9k=",
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAUDBAb/xAAhEAACAQQCAgMAAAAAAAAAAAABAgMABBEhBRITMSJBof/EABYBAQEBAAAAAAAAAAAAAAAAAAMCBP/EABcRAQEBAQAAAAAAAAAAAAAAAAEAEUL/2gAMAwEAAhEDEQA/AErzMrzKD1EnsKdGrELRDsGUax7OKlnt4bbxySNs5C9WzvH5TDjuPtnhZ3HYFiBnOqzuBsuWbEryOA7E43umltdSxR/Fjg/WTRRSNXJf/9k=",
         "alt": ""
       },
       "categories": [
@@ -284,66 +284,6 @@
       ],
       "featured": true,
       "order": 18
-    },
-    {
-      "_id": "/photos/img-1965-msjv147ekl2.jpg",
-      "image": {
-        "src": "/photos/img-1965-msjv147ekl2.jpg",
-        "width": 1280,
-        "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQFA//EAB8QAAICAgIDAQAAAAAAAAAAAAECAxEAIQQSEzFBUf/EABYBAQEBAAAAAAAAAAAAAAAAAAIBA//EABgRAAMBAQAAAAAAAAAAAAAAAAABEQIx/9oADAMBAAIRAxEAPwCJzt8kqhDhdAqbvGeFBKY2rt79A4tFLFG7RhW7vVSCSgu7Gvu6zWFiqVOSJPtZi6KKExjc7A/tY5K58jG9ljeGGPXERH//2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": true,
-      "order": 19
-    },
-    {
-      "_id": "/photos/img-1521-msig8xn9pty.jpg",
-      "image": {
-        "src": "/photos/img-1521-msig8xn9pty.jpg",
-        "width": 1280,
-        "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAEDAgb/xAAhEAACAgEEAgMAAAAAAAAAAAABAgMRAAQTMUEhUQUicf/EABYBAQEBAAAAAAAAAAAAAAAAAAECA//EABoRAAICAwAAAAAAAAAAAAAAAAARASFBQ3H/2gAMAwEAAhEDEQA/AOYjlkQELZBABHsese/IB4egery3xMqLrot1bjB+xBo1R4OR1cgnnZxGidUnHjv9yFYqUzekjRpRa3eNFuaUWQARxhhhk31x0//Z",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": false,
-      "order": 20
-    },
-    {
-      "_id": "/photos/img-1888-msjv1zle09p.jpg",
-      "image": {
-        "src": "/photos/img-1888-msjv1zle09p.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAUGAv/EACEQAAEEAQQDAQAAAAAAAAAAAAEAAgMRBAUSIVEiMUGR/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/8QAFxEBAQEBAAAAAAAAAAAAAAAAADEBAv/aAAwDAQACEQMRAD8AQafCZ84NDQ6hu2918VBLBA/HAdj7XuseI5BSPSZDDqMZb7eCL6T/ADJH4ulyvsOcG0DVe/qO1rxErZJNAnnpCyH0Ko/qFQf/2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": false,
-      "order": 21
-    },
-    {
-      "_id": "/photos/img-1793-msigbfimqrp.jpg",
-      "image": {
-        "src": "/photos/img-1793-msigbfimqrp.jpg",
-        "width": 1280,
-        "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAQFAf/EACMQAAEDAwIHAAAAAAAAAAAAAAIAAQMEETESIQUTMkFRcZL/xAAWAQEBAQAAAAAAAAAAAAAAAAADAAL/xAAaEQACAgMAAAAAAAAAAAAAAAAAAQISMjNx/9oADAMBAAIRAxEAPwCPDUHDGRCTi9mutCqlPdzP6dM8OpgKsCGaTSzFs793thBUYRGQgb6b7IGaqI1kpSSRsT4J8elTp5z5EeOnwhCWetdJZM//2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": true,
-      "order": 22
     }
   ],
   "categories": [
@@ -442,7 +382,7 @@
   "settings": {
     "availability": {
       "enabled": true,
-      "text": "Booking Through The Fall"
+      "text": "Booking August 2026 — 4 dates left"
     },
     "schedulingUrl": "https://calendly.com/hatmcollins",
     "business": {
