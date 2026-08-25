@@ -189,6 +189,31 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
     );
   }
 
+  /* Last line of defence: never let one publish take a pile of photographs off
+     the site.
+
+     The fingerprint check above should already make this unreachable, and it
+     does for any browser running this build. It exists because the failure it
+     guards against is silent, irreversible from the interface, and has already
+     happened five times — and because an editor page loaded from an older
+     deployment is not bound by code that shipped after it. Removing photographs
+     one or two at a time still works; removing eight at once is what a stale
+     draft looks like, not what deleting looks like.
+
+     The image files are left alone either way, so anything caught here stays
+     recoverable. */
+  const livePhotos = Array.isArray((live as { photos?: unknown })?.photos)
+    ? ((live as { photos: { image: { src: string } }[] }).photos ?? [])
+    : [];
+  const keeping = new Set(draft.content.photos.map((p) => p.image.src));
+  const dropping = livePhotos.map((p) => p.image?.src).filter((src) => src && !keeping.has(src));
+
+  if (dropping.length > 2) {
+    return NO(
+      `This would remove ${dropping.length} photographs from the site in one go, which is usually a sign this page is out of date rather than something you meant. Nothing was published. Reload the editor and check the photo list — if you really do want them gone, remove them a couple at a time.`,
+    );
+  }
+
   // Paths are decided server-side in stagePhoto, but the reference list arrives
   // from the browser — so re-check it rather than trusting it to write wherever
   // it likes in the repository.
