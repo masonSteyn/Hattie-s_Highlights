@@ -19,7 +19,7 @@ export function generateMetadata() {
  * services accordion.
  */
 export default async function HomePage() {
-  const [home, featured] = await Promise.all([getHome(), getFeaturedPhotos(6)]);
+  const [home, featured] = await Promise.all([getHome(), getFeaturedPhotos()]);
   const [lead, ...rest] = featured;
 
   return (

@@ -95,12 +95,20 @@ export async function getBudgetRanges(): Promise<BudgetRange[]> {
   return budgetRanges;
 }
 
-/** Home teaser grid: starred photos, in her order, capped. */
-export async function getFeaturedPhotos(limit = 6): Promise<Photo[]> {
-  return site.photos
+/**
+ * Home teaser grid: starred photos, in her order.
+ *
+ * Every starred photo, not a fixed handful. This used to stop at six while the
+ * editor said "11 showing on the home page" — so five stars did nothing, and
+ * the only way to discover that was to count the home page by hand. Starring is
+ * the control; how many are starred is her decision to make.
+ */
+export async function getFeaturedPhotos(limit?: number): Promise<Photo[]> {
+  const featured = site.photos
     .filter((p) => p.featured)
-    .sort((a, b) => Number(a.order) - Number(b.order))
-    .slice(0, limit);
+    .sort((a, b) => Number(a.order) - Number(b.order));
+
+  return limit === undefined ? featured : featured.slice(0, limit);
 }
 
 /**

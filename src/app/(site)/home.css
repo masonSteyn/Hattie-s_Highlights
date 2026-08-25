@@ -125,7 +125,16 @@
    axes rather than one — width by the column, height by the viewport — so a
    tall portrait and a wide landscape both land at a comparable optical size
    without either being cropped. */
+/* The box hugs the photograph rather than reserving a fixed share of the row.
+   `max-height` decides the size of a portrait, so a tall photo came out around
+   440px wide inside a 640px box — roughly 200px of empty space to its right,
+   above a grid spanning the full width. Nothing was misaligned in the sense of
+   being off-grid; the photograph simply sat in a box far wider than itself,
+   which looks like a mistake. Shrinking the box to the image puts its left edge
+   on the same line as the heading and the grid, and the caption underneath
+   matches the picture instead of the empty space. */
 .lead {
+  width: fit-content;
   max-width: 72%;
   margin-bottom: clamp(var(--s-8), 7vw, var(--s-10));
 }
@@ -175,6 +184,8 @@
   }
 
   .lead {
+    /* Full width on a narrow screen, so the box must not shrink to the image. */
+    width: auto;
     max-width: 100%;
     margin-bottom: var(--s-7);
   }
