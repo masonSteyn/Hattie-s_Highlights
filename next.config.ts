@@ -109,6 +109,26 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: SERVER_ACTION_BODY_LIMIT },
   },
 
+  /**
+   * Force sharp's native binaries into the /settings function bundle.
+   *
+   * sharp is loaded at runtime by the photo upload action. Next externalises it
+   * rather than bundling it, and the tracer does not follow the platform binary
+   * that sharp picks by `process.platform` at run time — so the function shipped
+   * without it and every upload died with "Failed to load external module sharp:
+   * ERR_DLOPEN_FAILED: libvips-cpp.so … cannot open shared object file".
+   *
+   * Nothing about that reaches application code: the action throws before it can
+   * report anything useful, and the editor can only say the upload did not
+   * complete, which reads like a connection problem and is not one.
+   *
+   * The glob matches whatever platform is installed where the build runs —
+   * darwin locally, linux-x64 on Vercel — so it stays correct in both.
+   */
+  outputFileTracingIncludes: {
+    "/settings": ["./node_modules/sharp/**/*", "./node_modules/@img/**/*"],
+  },
+
   images: {
     // Every image is served from /public in this repo, so no remote origin is
     // permitted at all.

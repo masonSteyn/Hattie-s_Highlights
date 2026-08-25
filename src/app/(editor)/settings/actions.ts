@@ -110,13 +110,32 @@ export async function stagePhoto(formData: FormData): Promise<StageResult> {
   const prepared = prepareUpload(new Uint8Array(await file.arrayBuffer()));
   if (!prepared.ok) return { ok: false, message: `${file.name}: ${prepared.reason}` };
 
-  const sharp = (await import("sharp")).default;
-  const buffer = Buffer.from(prepared.bytes);
+  /* sharp is a native module loaded at run time, and when its platform binary is
+     missing from the deployed bundle it throws here rather than returning
+     anything. Uncaught, that surfaced to the editor as "the upload did not
+     complete. Check your connection and try again." — which sent people off
+     retrying a file and a connection that were both fine, for days.
 
-  const [lqipBuffer, previewBuffer] = await Promise.all([
-    sharp(buffer).resize(20, 20, { fit: "inside" }).jpeg({ quality: 40 }).toBuffer(),
-    sharp(buffer).resize(400, 400, { fit: "inside" }).jpeg({ quality: 60 }).toBuffer(),
-  ]);
+     Whatever goes wrong inside image processing, the person uploading gets a
+     sentence that is true, and the real cause goes to the log. */
+  let lqipBuffer: Buffer;
+  let previewBuffer: Buffer;
+  try {
+    const sharp = (await import("sharp")).default;
+    const buffer = Buffer.from(prepared.bytes);
+
+    [lqipBuffer, previewBuffer] = await Promise.all([
+      sharp(buffer).resize(20, 20, { fit: "inside" }).jpeg({ quality: 40 }).toBuffer(),
+      sharp(buffer).resize(400, 400, { fit: "inside" }).jpeg({ quality: 60 }).toBuffer(),
+    ]);
+  } catch (error) {
+    console.error("[upload] Image processing failed:", error);
+    return {
+      ok: false,
+      message:
+        "The server could not process that image. This is a fault at our end, not with your photo or your connection — nothing you change about the file will help.",
+    };
+  }
 
   const uploaded = await createBlob(prepared.bytes);
   if (!uploaded.ok) return { ok: false, message: uploaded.error };
