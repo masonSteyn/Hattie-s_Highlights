@@ -34,7 +34,8 @@
     "js-yaml": "^5.2.3",
     "smol-toml": "^1.7.1",
     "uuid": "^14.0.1",
-    "undici": "^7.29.0"
+    "undici": "^7.29.0",
+    "nanoid": "^3.3.18"
   },
   "allowScripts": {
     "sharp@0.35.3": true,
