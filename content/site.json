@@ -301,21 +301,6 @@
       "order": 19
     },
     {
-      "_id": "/photos/img-0733-msf44lxgpre.jpg",
-      "image": {
-        "src": "/photos/img-0733-msf44lxgpre.jpg",
-        "width": 1920,
-        "height": 1280,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAANABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAwACBv/EAB8QAAICAQQDAAAAAAAAAAAAAAECABEDEhMhMVFhcf/EABUBAQEAAAAAAAAAAAAAAAAAAAIB/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMhMf/aAAwDAQACEQMRAD8A5HFiZ7081HXcCWCD6PcHExW6o/RcTIzBaOnnwtRRyV4NLQDZCTfUpmUlmA//2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "nature"
-      ],
-      "featured": false,
-      "order": 20
-    },
-    {
       "_id": "/photos/img-0962-msfn1xcjzlg.jpg",
       "image": {
         "src": "/photos/img-0962-msfn1xcjzlg.jpg",
@@ -328,7 +313,7 @@
         "nature"
       ],
       "featured": false,
-      "order": 21
+      "order": 20
     },
     {
       "_id": "/photos/img-1529-msig9efk89f.jpg",
@@ -343,7 +328,7 @@
         "portraits"
       ],
       "featured": true,
-      "order": 22
+      "order": 21
     },
     {
       "_id": "/photos/img-1965-msjv147ekl2.jpg",
@@ -358,7 +343,7 @@
         "portraits"
       ],
       "featured": true,
-      "order": 23
+      "order": 22
     },
     {
       "_id": "/photos/img-1521-msig8xn9pty.jpg",
@@ -373,7 +358,7 @@
         "portraits"
       ],
       "featured": false,
-      "order": 24
+      "order": 23
     },
     {
       "_id": "/photos/img-1888-msjv1zle09p.jpg",
@@ -388,7 +373,7 @@
         "portraits"
       ],
       "featured": false,
-      "order": 25
+      "order": 24
     },
     {
       "_id": "/photos/img-1793-msigbfimqrp.jpg",
@@ -403,7 +388,7 @@
         "portraits"
       ],
       "featured": true,
-      "order": 26
+      "order": 25
     }
   ],
   "categories": [
