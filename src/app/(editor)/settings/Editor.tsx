@@ -122,15 +122,33 @@ function useDraft(published: SiteContent, baseFingerprint: string) {
     setLoaded(true);
   }, []);
 
+  const dirty = useMemo(
+    () =>
+      draft.blobs.length > 0 ||
+      JSON.stringify(draft.content) !== JSON.stringify(published),
+    [draft, published],
+  );
+
+  /**
+   * Keep a draft only while it holds actual changes.
+   *
+   * This used to store one on every visit, including visits where nothing was
+   * touched. That is invisible until the site is published from anywhere — and
+   * then the leftover copy no longer matches what is published, so the editor
+   * announced "Unpublished changes" and greyed out Publish on every subsequent
+   * visit, for changes that never existed. Clearing it when there is nothing in
+   * it means looking around the editor leaves no trace to trip over later.
+   */
   useEffect(() => {
     if (!loaded) return;
     try {
-      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      if (dirty) window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      else window.localStorage.removeItem(DRAFT_KEY);
     } catch {
-      // Only small preview thumbnails are kept, so this is unlikely — but a
-      // full storage quota must not take the in-memory draft down with it.
+      // Only small preview thumbnails are kept, so a full quota is unlikely —
+      // but it must not take the in-memory draft down with it.
     }
-  }, [draft, loaded]);
+  }, [draft, dirty, loaded]);
 
   const update = useCallback((fn: (d: Draft) => void) => {
     setDraft((current) => {
@@ -149,13 +167,6 @@ function useDraft(published: SiteContent, baseFingerprint: string) {
      is showing — someone has published since. Publishing it would write the old
      content back over the new, so it is caught here rather than at the end. */
   const stale = loaded && draft.baseFingerprint !== baseFingerprint;
-
-  const dirty = useMemo(
-    () =>
-      draft.blobs.length > 0 ||
-      JSON.stringify(draft.content) !== JSON.stringify(published),
-    [draft, published],
-  );
 
   return { draft, update, discard, dirty, loaded, stale };
 }
@@ -1047,10 +1058,11 @@ export function Editor({
           {stale ? (
             <p className="edError" role="alert">
               The site has changed since this page was opened — it was probably
-              published from another tab or another device. Reload this page
-              before going further, otherwise publishing would put the older
-              version back and undo that work. Anything unpublished here will
-              need doing again.
+              published from another tab or another device. Publishing from here
+              would put the older version back, so it has been turned off. Press
+              Discard to pick up the current version. Reloading on its own will
+              not clear this, and anything unpublished here will need doing
+              again.
             </p>
           ) : null}
 
