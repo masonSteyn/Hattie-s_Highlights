@@ -404,21 +404,6 @@
       ],
       "featured": false,
       "order": 26
-    },
-    {
-      "_id": "/photos/img-6463-mt86x9k83y6.jpg",
-      "image": {
-        "src": "/photos/img-6463-mt86x9k83y6.jpg",
-        "width": 4032,
-        "height": 2268,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAALABQDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQBAgP/xAAkEAABAwQBAwUAAAAAAAAAAAABAgMRAAQSIQUiUWETFEFCsf/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAGREAAwADAAAAAAAAAAAAAAAAAAEhAhJB/9oADAMBAAIRAxEAPwBe9LT/ABb5G0qQHEx3G/yluES03cKUlOObZKfnRI1PiIqvBEqtVZdWMwDuKwL7jIf9JWEQBAAgZVBKNFXl0YvrtHuVST4iiptLt8NHr+3YUUdRV0//2Q==",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": false,
-      "order": 27
     }
   ],
   "categories": [
