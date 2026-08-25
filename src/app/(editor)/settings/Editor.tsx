@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useCallback, useEffect, useMemo, useState } from "react";
+import { useActionState, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { SiteContent } from "@/lib/content";
 import { needsReencode, reencode, type Prepared } from "@/lib/downscale";
@@ -578,6 +578,27 @@ function PhotosPanel({
   const [category, setCategory] = useState(categories[0]?.slug ?? "portraits");
   const featured = photos.filter((p) => p.featured).length;
 
+  /* Scroll a newly added photo into view.
+     New photos go on the end of the list, and the box you add them from is at
+     the top — so with two dozen already there, uploading one changed nothing
+     you could see without scrolling past everything else. It looked like the
+     upload had done nothing, which is exactly what the previous upload bug
+     looked like, and left no obvious way to undo an accidental one. */
+  const listRef = useRef<HTMLUListElement>(null);
+  const stagedCount = photos.filter((p) => p.image.preview).length;
+
+  useEffect(() => {
+    if (stagedCount === 0) return;
+    const rows = listRef.current?.querySelectorAll('[data-staged="true"]');
+    const newest = rows?.[rows.length - 1];
+    newest?.scrollIntoView({
+      block: "center",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [stagedCount]);
+
   const move = (index: number, delta: number) =>
     update((d) => {
       const target = index + delta;
@@ -632,11 +653,11 @@ function PhotosPanel({
 
       </div>
 
-      <ul className="edPhotoList">
+      <ul className="edPhotoList" ref={listRef}>
         {photos.map((photo, index) => {
           const staged = Boolean(photo.image.preview);
           return (
-            <li key={photo._id} className="edPhoto">
+            <li key={photo._id} className="edPhoto" data-staged={staged ? "true" : undefined}>
               <div className="edPhotoThumb">
                 {staged ? (
                   // eslint-disable-next-line @next/next/no-img-element -- a data: thumbnail, not a file next/image can optimise

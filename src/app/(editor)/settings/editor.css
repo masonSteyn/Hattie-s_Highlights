@@ -544,6 +544,13 @@
 }
 
 /* Marks anything held locally but not yet committed. */
+/* A photo added but not yet published. Marked on the row, not just with the
+   badge, so the one you just uploaded is obvious when the list scrolls to it. */
+.edPhoto[data-staged="true"] {
+  border-color: var(--blush);
+  background: color-mix(in srgb, var(--blush) 10%, transparent);
+}
+
 .edStaged {
   margin-top: var(--s-2);
   font-size: 0.6875rem;
