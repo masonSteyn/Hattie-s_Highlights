@@ -21,7 +21,15 @@ import { verifyPassword } from "@/lib/password";
 import { rateLimit } from "@/lib/rate-limit";
 import { endSession, isSignedIn, startSession } from "@/lib/session";
 
-export type Result = { ok: boolean; message?: string; url?: string };
+export type Result = {
+  ok: boolean;
+  message?: string;
+  url?: string;
+  /** Present when a publish would remove photographs and is waiting to be told
+   *  that is deliberate. `token` is derived from the exact set, so agreeing to
+   *  one removal cannot authorise a different one later. */
+  confirm?: { token: string; photos: string[] };
+};
 
 const OK = (message?: string, url?: string): Result => ({ ok: true, message, url });
 const NO = (message: string): Result => ({ ok: false, message });
@@ -197,8 +205,8 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
      guards against is silent, irreversible from the interface, and has already
      happened five times — and because an editor page loaded from an older
      deployment is not bound by code that shipped after it. Removing photographs
-     one or two at a time still works; removing eight at once is what a stale
-     draft looks like, not what deleting looks like.
+     one or two at a time still publishes straight through; removing more than
+     that asks first, showing exactly which photographs would go.
 
      The image files are left alone either way, so anything caught here stays
      recoverable. */
@@ -206,12 +214,23 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
     ? ((live as { photos: { image: { src: string } }[] }).photos ?? [])
     : [];
   const keeping = new Set(draft.content.photos.map((p) => p.image.src));
-  const dropping = livePhotos.map((p) => p.image?.src).filter((src) => src && !keeping.has(src));
+  const dropping: string[] = livePhotos
+    .map((p) => p.image?.src)
+    .filter((src): src is string => Boolean(src) && !keeping.has(src));
 
   if (dropping.length > 2) {
-    return NO(
-      `This would remove ${dropping.length} photographs from the site in one go, which is usually a sign this page is out of date rather than something you meant. Nothing was published. Reload the editor and check the photo list — if you really do want them gone, remove them a couple at a time.`,
-    );
+    /* Derived from the exact photographs being dropped, so the agreement is to
+       this removal and not to removing photographs in general — a token from an
+       earlier attempt cannot wave a different set through. */
+    const token = contentFingerprint(["remove", ...dropping].sort());
+
+    if (String(formData.get("confirmRemovals") ?? "") !== token) {
+      return {
+        ok: false,
+        message: `Publishing this would remove ${dropping.length} photographs from the site. That is usually a sign the page is out of date rather than something you meant, so nothing has been published yet. Check the ${dropping.length} below — if you do want them gone, say so and they will be removed.`,
+        confirm: { token, photos: dropping },
+      };
+    }
   }
 
   // Paths are decided server-side in stagePhoto, but the reference list arrives

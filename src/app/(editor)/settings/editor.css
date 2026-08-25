@@ -567,6 +567,41 @@
   margin-top: var(--s-4);
 }
 
+/* Photographs a publish would remove, shown before it is allowed to. */
+.edConfirmRemovals {
+  margin-top: var(--s-3);
+}
+
+.edRemovalList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.edRemoval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: center;
+  max-width: 5rem;
+}
+
+.edRemoval img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  border: 1px solid var(--rule-sage-faint);
+}
+
+.edRemovalName {
+  font-size: 0.6875rem;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  word-break: break-all;
+  text-align: center;
+  line-height: 1.3;
+}
+
 /* Upload progress and failures, sitting above whichever panel is open rather
    than inside the Photos panel — see UploadStatus in Editor.tsx. */
 .edUploadStatus:not(:empty) {

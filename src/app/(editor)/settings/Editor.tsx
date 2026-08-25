@@ -1045,6 +1045,24 @@ export function Editor({
               {state.url ? <> <a href={state.url} target="_blank" rel="noreferrer">View the change ↗</a></> : null}
             </p>
           ) : null}
+
+          {/* A publish that would remove photographs shows them first. Names
+              like "img-1965-msjv147ekl2.jpg" mean nothing to the person
+              deciding, so this shows the actual pictures — they are already
+              live at those paths, which is the whole reason they are at risk. */}
+          {state.confirm ? (
+            <div className="edConfirmRemovals">
+              <ul className="edRemovalList">
+                {state.confirm.photos.map((src) => (
+                  <li key={src} className="edRemoval">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- a published file, shown at thumbnail size for a yes/no decision */}
+                    <img src={src} alt="" width={64} height={64} />
+                    <span className="edRemovalName">{src.replace("/photos/", "")}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
 
         <div className="edPublishActions">
@@ -1055,6 +1073,18 @@ export function Editor({
           ) : null}
           <form action={formAction}>
             <input type="hidden" name="draft" value={JSON.stringify(draft)} />
+            {state.confirm ? (
+              <button
+                className="edButton"
+                name="confirmRemovals"
+                value={state.confirm.token}
+                disabled={pending}
+              >
+                {pending
+                  ? "Publishing…"
+                  : `Yes, remove ${state.confirm.photos.length} and publish`}
+              </button>
+            ) : null}
             <button
               className="edButton edButtonPrimary"
               disabled={
