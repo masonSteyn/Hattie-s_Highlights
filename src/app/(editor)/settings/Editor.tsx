@@ -586,7 +586,13 @@ function PhotosPanel({
   stage: (file: File, assign: (d: Draft, staged: StagedInfo) => void) => void;
 }) {
   const { photos, categories } = draft.content;
-  const [category, setCategory] = useState(categories[0]?.slug ?? "portraits");
+  /* Deliberately empty rather than defaulting to the first category.
+     It used to default to whichever category happened to be first — Weddings —
+     and the picker sat below the file input, so photos uploaded without
+     noticing it went silently into a category nobody looks at. They were on the
+     site, just not where they were meant to be, which is harder to spot than
+     them being missing. Nothing uploads now until this is answered. */
+  const [category, setCategory] = useState("");
   const featured = photos.filter((p) => p.featured).length;
 
   /* Scroll a newly added photo into view.
@@ -624,14 +630,28 @@ function PhotosPanel({
       intro={`${photos.length} on the site, ${featured} showing on the home page. The order here is the order they appear.`}
     >
       <div className="edForm edUpload">
+        <Field label="Put them in" hint="Pick this first — it decides which page the photos appear on.">
+          <select className="edInput" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="">Choose one…</option>
+            {categories.map((c) => (
+              <option key={c._id} value={c.slug}>{c.title}</option>
+            ))}
+          </select>
+        </Field>
+
         <Field
           label="Add photos"
-          hint="Drag them straight off the camera — anything too large is resized for you. Where the photo was taken is removed automatically."
+          hint={
+            category
+              ? "Drag them straight off the camera — anything too large is resized for you. Where the photo was taken is removed automatically."
+              : "Choose a category above first, then add photos."
+          }
         >
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
             multiple
+            disabled={!category}
             className="edFile"
             onChange={(e) => {
               const files = Array.from(e.target.files ?? []);
@@ -652,14 +672,6 @@ function PhotosPanel({
               e.target.value = "";
             }}
           />
-        </Field>
-
-        <Field label="Put them in">
-          <select className="edInput" value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map((c) => (
-              <option key={c._id} value={c.slug}>{c.title}</option>
-            ))}
-          </select>
         </Field>
 
       </div>

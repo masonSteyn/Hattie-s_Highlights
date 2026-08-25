@@ -310,6 +310,20 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
     }
   }
 
+  /* A photo filed under nothing, or under a category that does not exist, is
+     uploaded and committed and then appears on no page at all. That is worse
+     than a rejected upload, because everything looks like it worked. */
+  const knownCategories = new Set(draft.content.categories.map((c) => c.slug));
+  for (const photo of draft.content.photos) {
+    const valid = (photo.categories ?? []).filter((slug) => knownCategories.has(slug));
+    if (valid.length === 0) {
+      return NO(
+        `One of the photos is not filed under any category, so it would not appear on any page. Pick a category for it and publish again.`,
+      );
+    }
+    photo.categories = valid;
+  }
+
   // Positions are renumbered from the order shown in the editor.
   draft.content.photos.forEach((photo, index) => (photo.order = index));
   sessions.forEach((session, index) => (session.order = index));
