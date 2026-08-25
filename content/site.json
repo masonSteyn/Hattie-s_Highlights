@@ -346,21 +346,6 @@
       "order": 22
     },
     {
-      "_id": "/photos/img-1521-msig8xn9pty.jpg",
-      "image": {
-        "src": "/photos/img-1521-msig8xn9pty.jpg",
-        "width": 1280,
-        "height": 1920,
-        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAEDAgb/xAAhEAACAgEEAgMAAAAAAAAAAAABAgMRAAQTMUEhUQUicf/EABYBAQEBAAAAAAAAAAAAAAAAAAECA//EABoRAAICAwAAAAAAAAAAAAAAAAARASFBQ3H/2gAMAwEAAhEDEQA/AOYjlkQELZBABHsese/IB4egery3xMqLrot1bjB+xBo1R4OR1cgnnZxGidUnHjv9yFYqUzekjRpRa3eNFuaUWQARxhhhk31x0//Z",
-        "alt": ""
-      },
-      "categories": [
-        "portraits"
-      ],
-      "featured": false,
-      "order": 23
-    },
-    {
       "_id": "/photos/img-1888-msjv1zle09p.jpg",
       "image": {
         "src": "/photos/img-1888-msjv1zle09p.jpg",
@@ -373,7 +358,7 @@
         "portraits"
       ],
       "featured": false,
-      "order": 24
+      "order": 23
     },
     {
       "_id": "/photos/img-1793-msigbfimqrp.jpg",
@@ -388,7 +373,7 @@
         "portraits"
       ],
       "featured": true,
-      "order": 25
+      "order": 24
     }
   ],
   "categories": [
