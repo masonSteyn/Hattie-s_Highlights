@@ -137,6 +137,31 @@ export async function createBlob(
  * Files not mentioned are left untouched: the new tree is built with the
  * previous commit as its base, so this only ever adds or replaces.
  */
+/**
+ * The content store as the repository currently holds it.
+ *
+ * Read at publish time so a draft can be checked against what is actually live
+ * rather than against whatever the editor was built with. Returns null when the
+ * file cannot be read, which callers must treat as "cannot verify" rather than
+ * as "no conflict".
+ */
+export async function readPublishedContent(): Promise<unknown | null> {
+  const cfg = config();
+  if (!cfg) return null;
+
+  try {
+    const file = await gh<{ content: string; encoding: string }>(
+      cfg,
+      `/contents/content%2Fsite.json?ref=${encodeURIComponent(cfg.branch)}`,
+    );
+    if (file.encoding !== "base64") return null;
+    return JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
+  } catch (error) {
+    console.error("[github] Could not read the published content:", error);
+    return null;
+  }
+}
+
 export async function publishFiles(
   files: GitFile[],
   message: string,

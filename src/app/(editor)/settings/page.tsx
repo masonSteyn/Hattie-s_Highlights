@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { authConfig } from "@/lib/auth";
 import { getSiteContent } from "@/lib/content";
+import { contentFingerprint } from "@/lib/fingerprint";
 import { publishBlockedReason, publishConfigured, publishEnvReport } from "@/lib/github";
 import { isSignedIn } from "@/lib/session";
 
@@ -24,9 +25,14 @@ export default async function SettingsPage() {
   if (!config.ready) return <SetupNotice missing={config.missing} />;
   if (!(await isSignedIn())) return <SignInForm />;
 
+  const published = getSiteContent();
+
   return (
     <Editor
-      published={getSiteContent()}
+      published={published}
+      /* Describes the content this page is rendering, so publish can tell
+         whether the browser is still working from what it was shown. */
+      baseFingerprint={contentFingerprint(published)}
       publishReady={publishConfigured()}
       publishReason={publishBlockedReason()}
       publishEnv={publishEnvReport()}

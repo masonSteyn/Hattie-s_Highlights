@@ -5,11 +5,13 @@ import { redirect } from "next/navigation";
 
 import { authConfig } from "@/lib/auth";
 import type { SiteContent } from "@/lib/content";
+import { contentFingerprint } from "@/lib/fingerprint";
 import {
   createBlob,
   publishBlockedReason,
   publishConfigured,
   publishFiles,
+  readPublishedContent,
   type GitBlobRef,
   type GitFile,
 } from "@/lib/github";
@@ -138,7 +140,12 @@ export async function stagePhoto(formData: FormData): Promise<StageResult> {
 
 /** Sent by the editor: the content store, plus references to already-uploaded
  *  photos. Deliberately text-only — no image bytes cross this boundary. */
-type Draft = { content: SiteContent; blobs: GitBlobRef[] };
+type Draft = {
+  content: SiteContent;
+  blobs: GitBlobRef[];
+  /** Fingerprint of the content the editor was showing when this draft began. */
+  baseFingerprint?: string;
+};
 
 /**
  * Everything Hattie changed since she last published, in one commit.
@@ -159,6 +166,28 @@ export async function publish(_prev: Result, formData: FormData): Promise<Result
   }
 
   if (!draft?.content?.photos) return NO("Those changes look incomplete. Please reload.");
+
+  /* Refuse to publish over work this draft never saw.
+     The draft carries a complete copy of the content store, so publishing writes
+     the whole file. Without this check the last publish simply won: a tab opened
+     an hour earlier would overwrite every photo added since, leaving the image
+     files orphaned in the repository and no error anywhere. That happened
+     repeatedly and cost real photographs off the live site.
+     The browser is checked too, but that check is advisory — this one decides. */
+  const live = await readPublishedContent();
+  if (live === null) {
+    // Cannot verify. Fail closed: a moment's inconvenience beats overwriting
+    // work that cannot be recovered from the interface.
+    return NO(
+      "Could not check the current version of the site just now. Nothing was published — please try again in a moment.",
+    );
+  }
+
+  if (!draft.baseFingerprint || draft.baseFingerprint !== contentFingerprint(live)) {
+    return NO(
+      "The site has changed since this page was opened — it was probably published from another tab or device. Nothing was published. Reload the editor and make the change again; publishing this would have put the older version back.",
+    );
+  }
 
   // Paths are decided server-side in stagePhoto, but the reference list arrives
   // from the browser — so re-check it rather than trusting it to write wherever

@@ -20,9 +20,9 @@ const idle: Result = { ok: true };
  * no way to clear it from the UI. Bumping this key retires old drafts outright;
  * `isDraft` below is the second line of defence for anything else.
  */
-const DRAFT_KEY = "hh.draft.v2";
+const DRAFT_KEY = "hh.draft.v3";
 /** Retired keys, cleared on load so they cannot accumulate. */
-const OLD_DRAFT_KEYS = ["hh.draft.v1"];
+const OLD_DRAFT_KEYS = ["hh.draft.v1", "hh.draft.v2"];
 
 /** A photo already uploaded to GitHub, waiting to be committed. */
 type BlobRef = { path: string; sha: string };
@@ -33,7 +33,14 @@ type StagedInfo = { src: string; width: number; height: number; lqip: string; pr
 
 /* ── Draft state ─────────────────────────────────────────────────────────── */
 
-type Draft = { content: SiteContent; blobs: BlobRef[] };
+type Draft = {
+  content: SiteContent;
+  blobs: BlobRef[];
+  /** Fingerprint of the content this draft started from. Publishing compares it
+   *  against what is actually live, so a tab left open cannot overwrite work
+   *  done since it was opened. */
+  baseFingerprint: string;
+};
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -50,6 +57,7 @@ function isDraft(value: unknown): value is Draft {
   if (!value || typeof value !== "object") return false;
   const d = value as Partial<Draft>;
   if (!Array.isArray(d.blobs)) return false;
+  if (typeof d.baseFingerprint !== "string" || !d.baseFingerprint) return false;
   if (!d.content || typeof d.content !== "object") return false;
 
   const c = d.content as Partial<SiteContent>;
@@ -70,8 +78,12 @@ function isDraft(value: unknown): value is Draft {
  * things, look at them together, and publish once. It also gives her a way out:
  * nothing is committed until she says so, and Discard puts it all back.
  */
-function useDraft(published: SiteContent) {
-  const [draft, setDraft] = useState<Draft>(() => ({ content: clone(published), blobs: [] }));
+function useDraft(published: SiteContent, baseFingerprint: string) {
+  const [draft, setDraft] = useState<Draft>(() => ({
+    content: clone(published),
+    blobs: [],
+    baseFingerprint,
+  }));
   const [loaded, setLoaded] = useState(false);
 
   // Restore an unfinished draft — a closed tab should not cost an afternoon's
@@ -130,8 +142,13 @@ function useDraft(published: SiteContent) {
 
   const discard = useCallback(() => {
     window.localStorage.removeItem(DRAFT_KEY);
-    setDraft({ content: clone(published), blobs: [] });
-  }, [published]);
+    setDraft({ content: clone(published), blobs: [], baseFingerprint });
+  }, [published, baseFingerprint]);
+
+  /* The restored draft was built on an older version of the site than this page
+     is showing — someone has published since. Publishing it would write the old
+     content back over the new, so it is caught here rather than at the end. */
+  const stale = loaded && draft.baseFingerprint !== baseFingerprint;
 
   const dirty = useMemo(
     () =>
@@ -140,7 +157,7 @@ function useDraft(published: SiteContent) {
     [draft, published],
   );
 
-  return { draft, update, discard, dirty, loaded };
+  return { draft, update, discard, dirty, loaded, stale };
 }
 
 /* ── Shared bits ─────────────────────────────────────────────────────────── */
@@ -814,17 +831,19 @@ type Tab = (typeof TABS)[number];
 
 export function Editor({
   published,
+  baseFingerprint,
   publishReady,
   publishReason,
   publishEnv,
 }: {
   published: SiteContent;
+  baseFingerprint: string;
   publishReady: boolean;
   publishReason: string | null;
   publishEnv: { name: string; present: boolean; note?: string }[];
 }) {
   const [tab, setTab] = useState<Tab>("Photos");
-  const { draft, update, discard, dirty, loaded } = useDraft(published);
+  const { draft, update, discard, dirty, loaded, stale } = useDraft(published, baseFingerprint);
   const [errors, setErrors] = useState<string[]>([]);
   const [uploading, setUploading] = useState(0);
   // Resizing is separate from uploading because it is the slow part for a big
@@ -832,7 +851,12 @@ export function Editor({
   const [preparing, setPreparing] = useState(0);
   const [state, formAction, pending] = useActionState(publish, idle);
 
-  // Once a publish succeeds the draft is the published state, so clear it.
+  /* Once a publish succeeds the draft is the published state, so clear it.
+     The page itself is now out of date — it is still rendering the content the
+     build had before the publish — so further editing has to wait for a reload.
+     Without this the next publish would be refused as stale, which is correct
+     but reads as a failure rather than as "you are one reload behind". */
+  const publishedThisSession = state.ok && Boolean(state.message);
   useEffect(() => {
     if (state.ok && state.message) {
       window.localStorage.removeItem(DRAFT_KEY);
@@ -995,6 +1019,26 @@ export function Editor({
           ) : (
             "Everything is published."
           )}
+
+          {/* Both of these disable the button, so both have to say why. A
+              control that is greyed out with no explanation is the same problem
+              as a failure with no message. */}
+          {stale ? (
+            <p className="edError" role="alert">
+              The site has changed since this page was opened — it was probably
+              published from another tab or another device. Reload this page
+              before going further, otherwise publishing would put the older
+              version back and undo that work. Anything unpublished here will
+              need doing again.
+            </p>
+          ) : null}
+
+          {publishedThisSession && !stale ? (
+            <p className="edOk" role="status">
+              Published. Reload this page before making more changes — it is
+              still showing the version from before you published.
+            </p>
+          ) : null}
           {state.message ? (
             <p className={state.ok ? "edOk" : "edError"} role="status">
               {state.message}
@@ -1013,9 +1057,16 @@ export function Editor({
             <input type="hidden" name="draft" value={JSON.stringify(draft)} />
             <button
               className="edButton edButtonPrimary"
-              disabled={!dirty || pending || !publishReady || uploading > 0}
+              disabled={
+                !dirty || pending || !publishReady || uploading > 0 || preparing > 0 ||
+                stale || publishedThisSession
+              }
             >
-              {pending ? "Publishing…" : uploading > 0 ? "Waiting for uploads…" : "Publish changes"}
+              {pending
+                ? "Publishing…"
+                : uploading > 0 || preparing > 0
+                  ? "Waiting for photos…"
+                  : "Publish changes"}
             </button>
           </form>
         </div>
