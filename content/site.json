@@ -132,7 +132,7 @@
       "categories": [
         "nature"
       ],
-      "featured": true,
+      "featured": false,
       "order": 8
     },
     {
@@ -517,7 +517,7 @@
   "settings": {
     "availability": {
       "enabled": true,
-      "text": "TX Booking Until September"
+      "text": "CO Booking This Fall"
     },
     "schedulingUrl": "https://calendly.com/hatmcollins",
     "business": {
