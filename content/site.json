@@ -419,6 +419,21 @@
       ],
       "featured": true,
       "order": 27
+    },
+    {
+      "_id": "/photos/img-3206-mu1yaha01nl.jpg",
+      "image": {
+        "src": "/photos/img-3206-mu1yaha01nl.jpg",
+        "width": 1280,
+        "height": 1920,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAIEBf/EAB0QAAICAwEBAQAAAAAAAAAAAAERAAIDEiFxEyL/xAAXAQADAQAAAAAAAAAAAAAAAAAAAQME/8QAGREAAgMBAAAAAAAAAAAAAAAAAAECAxFB/9oADAMBAAIRAxEAPwDlfTqRB8g5EURISsNsiFj+SA3JzXFcieyHTMuA62o6zOSdvOxfliAIiVFw/9k=",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": false,
+      "order": 28
     }
   ],
   "categories": [
