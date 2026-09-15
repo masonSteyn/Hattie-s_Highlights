@@ -474,14 +474,14 @@
       "_id": "portraits",
       "title": "Portraits",
       "description": "Great for seniors, couples, families, graduates, and just-because moments. Includes up to 90 minutes at one location and a professionally edited online gallery.",
-      "startingPrice": 170,
+      "startingPrice": 185,
       "order": 1
     },
     {
       "_id": "events",
       "title": "Events",
       "description": "From birthday parties and graduations to showers, reunions, and community events, I'll document the moments as they naturally unfold with an edited gallery at the end. Priced by the hour.",
-      "startingPrice": 200,
+      "startingPrice": 250,
       "order": 2
     }
   ],
