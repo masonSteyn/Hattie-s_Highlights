@@ -297,7 +297,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": true,
+      "featured": false,
       "order": 19
     },
     {
@@ -342,7 +342,7 @@
       "categories": [
         "portraits"
       ],
-      "featured": false,
+      "featured": true,
       "order": 22
     },
     {
@@ -464,6 +464,21 @@
       ],
       "featured": true,
       "order": 30
+    },
+    {
+      "_id": "/photos/img-3697-mw5exox6fs6.jpg",
+      "image": {
+        "src": "/photos/img-3697-mw5exox6fs6.jpg",
+        "width": 1280,
+        "height": 1920,
+        "lqip": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAUAA0DASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAABAADBf/EACQQAAIBAwMDBQAAAAAAAAAAAAECAwAEERIhIgUzQVFhkeHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/8QAGBEAAwEBAAAAAAAAAAAAAAAAAAERIUH/2gAMAwEAAhEDEQA/ADpcz3cbKyllA5cyKOJIST3Qc74b6pM96YoRa8QAmxVM4b1+M0CUxs5Lkk+wyKyl1jkMb6RheyqDgZ8V0+k2VvPamSZNZ1FQCdgB+1VU+EZ//9k=",
+        "alt": ""
+      },
+      "categories": [
+        "nature"
+      ],
+      "featured": true,
+      "order": 31
     }
   ],
   "categories": [
